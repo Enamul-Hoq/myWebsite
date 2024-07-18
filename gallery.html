@@ -5,11 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery - Md Enamul Hoq</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .nav ul li a[href="gallery.html"] {
+            color: rgb(255, 0, 0); /* red */
+            background-color: rgb(0, 0, 255); /* blue */
+            border: 2px solid rgb(0, 255, 0); /* green */
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .gallery-img {
+            display: block;
+            margin: 20px auto;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 10px;
+        }
+        .caption {
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Md Enamul Hoq</h1>
-        <nav>
+        <nav class="nav">
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
@@ -23,7 +43,15 @@
     </header>
     <main>
         <h2>Gallery</h2>
-        <p>Photos from conferences and events.</p>
+        
+        <img src="1.jpg" alt="Conference 1" class="gallery-img">
+        <p class="caption">Attending a conference at SCCM</p>
+        
+        <img src="2.jpg" alt="Conference 2" class="gallery-img">
+        <p class="caption">Presenting my research at SCCM</p>
+        
+        <img src="3.jpg" alt="Research Collaboration" class="gallery-img">
+        <p class="caption">With my MS Supervisor</p>
     </main>
     <footer>
         <p>&copy; 2024 Md Enamul Hoq. All rights reserved.</p>
