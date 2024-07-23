@@ -36,27 +36,27 @@ nav ul li a {
 }
 
 nav ul li a:nth-child(1) {
-    background-color: #ff6347; /* Tomato */
+    background-color: rgb(255, 99, 71); /* Tomato */
 }
 
 nav ul li a:nth-child(2) {
-    background-color: #ffa07a; /* Light Salmon */
+    background-color: rgb(255, 160, 122); /* Light Salmon */
 }
 
 nav ul li a:nth-child(3) {
-    background-color: #20b2aa; /* Light Sea Green */
+    background-color: rgb(32, 178, 170); /* Light Sea Green */
 }
 
 nav ul li a:nth-child(4) {
-    background-color: #87cefa; /* Light Sky Blue */
+    background-color: rgb(135, 206, 250); /* Light Sky Blue */
 }
 
 nav ul li a:nth-child(5) {
-    background-color: #9370db; /* Medium Purple */
+    background-color: rgb(147, 112, 219); /* Medium Purple */
 }
 
 nav ul li a:nth-child(6) {
-    background-color: #ff69b4; /* Hot Pink */
+    background-color: rgb(255, 105, 180); /* Hot Pink */
 }
 
 nav ul li a:hover {
