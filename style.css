@@ -119,3 +119,10 @@ section {
 .carousel-controls button:hover {
     background-color: #555;
 }
+
+.qr-code {
+    max-width: 150px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
