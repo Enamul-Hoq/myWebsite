@@ -29,34 +29,9 @@ nav ul li {
 }
 
 nav ul li a {
-    color: white;
     text-decoration: none;
     padding: 5px 10px;
     border-radius: 5px;
-}
-
-nav ul li a:nth-child(1) {
-    background-color: rgb(255, 99, 71); /* Tomato */
-}
-
-nav ul li a:nth-child(2) {
-    background-color: rgb(255, 160, 122); /* Light Salmon */
-}
-
-nav ul li a:nth-child(3) {
-    background-color: rgb(32, 178, 170); /* Light Sea Green */
-}
-
-nav ul li a:nth-child(4) {
-    background-color: rgb(135, 206, 250); /* Light Sky Blue */
-}
-
-nav ul li a:nth-child(5) {
-    background-color: rgb(147, 112, 219); /* Medium Purple */
-}
-
-nav ul li a:nth-child(6) {
-    background-color: rgb(255, 105, 180); /* Hot Pink */
 }
 
 nav ul li a:hover {
