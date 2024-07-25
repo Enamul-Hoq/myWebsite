@@ -32,20 +32,21 @@ nav ul li a {
     text-decoration: none;
     padding: 5px 10px;
     border-radius: 5px;
-    color: black; /* Black text */
+    color: white; /* White text */
     border: 1px solid #333; /* Optional: Border for better visibility */
+    background-color: white; /* White background */
+    color: black; /* Black text */
 }
 
-nav ul li a.home,
-nav ul li a.gallery {
-    background-color: blue;
-    color: white;
+nav ul li a[href="index.html"] {
+    background-color: blue; /* Blue background for Home */
+    color: white; /* White text */
 }
 
-nav ul li a.research,
-nav ul li a.publications {
-    background-color: green;
-    color: white;
+nav ul li a[href="publications.html"],
+nav ul li a[href="research.html"] {
+    background-color: green; /* Green background for Publications and Research */
+    color: white; /* White text */
 }
 
 nav ul li a:hover {
