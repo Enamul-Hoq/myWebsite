@@ -32,11 +32,25 @@ nav ul li a {
     text-decoration: none;
     padding: 5px 10px;
     border-radius: 5px;
+    color: black; /* Black text */
+    border: 1px solid #333; /* Optional: Border for better visibility */
+}
+
+nav ul li a.home,
+nav ul li a.gallery {
+    background-color: blue;
+    color: white;
+}
+
+nav ul li a.research,
+nav ul li a.publications {
+    background-color: green;
+    color: white;
 }
 
 nav ul li a:hover {
-    background-color: #555;
-    color: #fff;
+    background-color: #ccc; /* Light grey on hover */
+    color: black;
 }
 
 main {
@@ -80,13 +94,15 @@ section {
 .research-item a {
     display: block;
     padding: 10px;
-    background-color: #333;
-    color: white;
+    background-color: white;
+    color: black;
     text-decoration: none;
     border-radius: 5px;
     text-align: center;
+    border: 1px solid #333; /* Optional: Border for better visibility */
 }
 
 .research-item a:hover {
-    background-color: #555;
+    background-color: #ccc; /* Light grey on hover */
+    color: black;
 }
