@@ -48,39 +48,11 @@ nav ul li a {
     transition: background-color 0.3s;
 }
 
-/* Button Styling for Colorful Interface */
-nav ul li a[href="#home"] {
-    background-color: #3498db; /* Blue for Home */
-}
-
-nav ul li a[href="#about"] {
-    background-color: #9b59b6; /* Purple for About */
-}
-
-nav ul li a[href="#resume"] {
-    background-color: #e74c3c; /* Red for Resume */
-}
-
-nav ul li a[href="#publications"] {
-    background-color: #27ae60; /* Green for Publications */
-}
-
-nav ul li a[href="#gallery"] {
-    background-color: #f1c40f; /* Yellow for Gallery */
-}
-
-nav ul li a[href="#research"] {
-    background-color: #16a085; /* Teal for Research */
-}
-
-nav ul li a[href="#contact"] {
-    background-color: #d35400; /* Orange for Contact */
-}
-
 nav ul li a:hover {
-    opacity: 0.8; /* Add hover effect */
+    opacity: 0.8;
 }
 
+/* Section Styling */
 section {
     padding: 60px 0;
 }
@@ -104,8 +76,15 @@ section h2 {
 }
 
 .gallery-photo {
-    max-width: 300px; /* Set the max width for consistency */
+    max-width: 400px; /* Set the max width for better visibility */
     height: auto; /* Maintain aspect ratio */
+    border-radius: 10px;
+}
+
+/* Research Section */
+.research-photo {
+    max-width: 400px; /* Set the max width for large images */
+    height: auto;
     border-radius: 10px;
 }
 
@@ -118,13 +97,13 @@ section h2 {
 }
 
 .profile-photo {
-    width: 150px;
+    width: 200px; /* Increase size for better visualization */
     height: auto;
     border-radius: 50%;
 }
 
 .qr-code {
-    width: 150px;
+    width: 200px; /* Increase size for better visibility */
     height: auto;
 }
 
