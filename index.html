@@ -11,7 +11,7 @@
     <!-- Header Section -->
     <header>
         <div class="container">
-            <h1 class="animate-fade">Md Enamul Hoq</h1>
+            <h1>Md Enamul Hoq</h1>
             <nav>
                 <ul>
                     <li><a href="#home">Home</a></li>
@@ -27,10 +27,16 @@
     </header>
 
     <!-- Home Section -->
-    <section id="home" class="hero">
+    <section id="home">
         <div class="container">
-            <h2 class="animate-slide">Welcome to My Digital Space!</h2>
-            <p>I am Md. Enamul Hoq, a passionate researcher in Biomedical Informatics, Imaging Informatics, and AI. My goal is to build innovative models to improve diagnostic precision in healthcare.</p>
+            <h2>Welcome to My Digital Space!</h2>
+            <p>Greetings! I am Md. Enamul Hoq, a dedicated and passionate researcher in Biomedical Informatics and Imaging Informatics. 
+            With a background in sensor engineering, physics, and medical imaging, I am driven to innovate and contribute to healthcare technology.</p>
+            
+            <p>Throughout my journey, I have worked on diverse projects involving quantitative imaging, machine learning, and deep neural networks. 
+            My mission is to enhance diagnostic precision and improve patient care through state-of-the-art technology.</p>
+
+            <!-- Profile Section with Photo and QR Code -->
             <div class="profile">
                 <img src="Photos2.png" alt="Profile Photo" class="profile-photo">
                 <img src="qr.png" alt="QR Code" class="qr-code">
@@ -42,26 +48,11 @@
     <section id="about">
         <div class="container">
             <h2>About Me</h2>
-            <p>I am an experienced researcher with a background in physics, sensor engineering, and medical imaging. My passion lies at the intersection of technology and healthcare, where I use AI to improve patient outcomes.</p>
-        </div>
-    </section>
+            <p>I am passionate about Biomedical Informatics and Imaging Informatics. My expertise lies at the intersection of engineering and healthcare, 
+            leveraging AI to create innovative solutions for medical applications.</p>
 
-    <!-- Resume Section -->
-    <section id="resume">
-        <div class="container">
-            <h2>Resume</h2>
-            <p><a href="Enamul_Hoq_Resume.pdf" class="button" target="_blank">Download Resume</a></p>
-        </div>
-    </section>
-
-    <!-- Publications Section -->
-    <section id="publications">
-        <div class="container">
-            <h2>Publications</h2>
-            <ul>
-                <li><a href="https://scholar.google.com/citations?user=mP_LvPoAAAAJ&hl=en" target="_blank">Google Scholar Profile</a></li>
-                <li><a href="https://www.researchgate.net/profile/Md-Enamul-Hoq-2" target="_blank">ResearchGate Profile</a></li>
-            </ul>
+            <p>I specialize in designing AI models, including deep learning architectures, to support medical imaging analysis and improve healthcare diagnostics. 
+            Feel free to explore my research and connect with me!</p>
         </div>
     </section>
 
@@ -69,53 +60,49 @@
     <section id="gallery">
         <div class="container">
             <h2>Gallery</h2>
-            <div class="gallery-item">
-                <img src="1.jpg" alt="Conference 1" class="gallery-photo">
-                <p>Society of Critical Care in Medicine conference</p>
-            </div>
-            <div class="gallery-item">
-                <img src="2.jpg" alt="Conference 2" class="gallery-photo">
-                <p>Society of Critical Care in Medicine conference</p>
-            </div>
-            <div class="gallery-item">
-                <img src="IMG.jpg" alt="Judging Posters" class="gallery-photo">
-                <p>Judging Posters at the Arkansas Symposium</p>
-            </div>
-            <div class="gallery-item">
-                <img src="4.jpg" alt="Poster at NCI-EDRN" class="gallery-photo">
-                <p>The Poster I presented at the NCI-EDRN Conference at CALTECH</p>
+            <div class="gallery-grid">
+                <img src="1.jpg" alt="Conference 1" class="gallery-photo" onclick="openModal(this)">
+                <img src="2.jpg" alt="Conference 2" class="gallery-photo" onclick="openModal(this)">
+                <img src="3.jpg" alt="Poster with MS Supervisor" class="gallery-photo" onclick="openModal(this)">
+                <img src="IMG.jpg" alt="Judging Posters" class="gallery-photo" onclick="openModal(this)">
+                <img src="4.jpg" alt="Poster at NCI-EDRN Conference" class="gallery-photo" onclick="openModal(this)">
+                <img src="5.jpg" alt="NCI-EDRN Conference 1" class="gallery-photo" onclick="openModal(this)">
+                <img src="6.jpg" alt="NCI-EDRN Conference 2" class="gallery-photo" onclick="openModal(this)">
+                <img src="7.jpg" alt="NCI-EDRN Conference 3" class="gallery-photo" onclick="openModal(this)">
+                <img src="8.jpg" alt="Emory Datathon" class="gallery-photo" onclick="openModal(this)">
             </div>
         </div>
     </section>
 
-    <!-- Research Section -->
-    <section id="research">
-        <div class="container">
-            <h2>Research</h2>
-            <div class="research-item">
-                <a href="https://edrn.cancer.gov/documents/1308/Abstract_MH.pdf" target="_blank">Research Abstract</a>
-            </div>
-            <div class="research-item">
-                <img src="mixed_model.png" alt="Mixed Model" class="research-photo">
-                <p>Definition of Mixed Model</p>
-            </div>
-            <div class="research-item">
-                <img src="Pipeline.jpeg" alt="Pipeline" class="research-photo">
-                <p>Pipeline of My Work</p>
-            </div>
-        </div>
-    </section>
+    <!-- Modal Popup -->
+    <div id="modal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modal-image">
+        <div id="caption"></div>
+    </div>
 
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="container">
-            <h2>Contact</h2>
-            <p>Email: <a href="mailto:mhoq@uams.edu">mhoq@uams.edu</a> | <a href="mailto:mdenamulmte@gmail.com">mdenamulmte@gmail.com</a></p>
-        </div>
-    </section>
-
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2024 Md Enamul Hoq. All rights reserved.</p>
+        <div class="container">
+            <p>&copy; 2024 Md Enamul Hoq. All rights reserved.</p>
+        </div>
     </footer>
+
+    <script>
+        function openModal(element) {
+            const modal = document.getElementById("modal");
+            const modalImage = document.getElementById("modal-image");
+            const caption = document.getElementById("caption");
+
+            modal.style.display = "block";
+            modalImage.src = element.src;
+            caption.innerHTML = element.alt;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("modal");
+            modal.style.display = "none";
+        }
+    </script>
 </body>
 </html>
