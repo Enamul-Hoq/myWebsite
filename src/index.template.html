@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en" data-window="lung">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Md Enamul Hoq — Medical imaging AI</title>
+<meta name="description" content="Md Enamul Hoq builds and validates foundation-model systems for lung cancer screening CT and digital pathology. Ph.D. candidate in Biomedical Informatics at UAMS.">
+<meta name="author" content="Md Enamul Hoq">
+<link rel="canonical" href="https://enamul-hoq.github.io/myWebsite/">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Md Enamul Hoq — Medical imaging AI">
+<meta property="og:description" content="Foundation models for lung cancer screening CT, digital pathology, and the validation work that gets them near a clinic.">
+<meta property="og:image" content="https://enamul-hoq.github.io/myWebsite/assets/img/enamul-hoq-square.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0E13'/%3E%3Cg stroke='%235FD0E2' stroke-width='1.6' fill='none'%3E%3Ccircle cx='16' cy='16' r='7'/%3E%3Cpath d='M16 3v6M16 23v6M3 16h6M23 16h6'/%3E%3C/g%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500;12..96,75..100,700;12..96,75..100,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   Palette: a radiology reading room.
+   "Lung window" is the default view — graphite, ice blue.
+   "Soft tissue" is the alternate — bone paper, ink.
+   Cyan = CT.  Pink = H&E.  Violet = models.  Amber = recognition.
+   ============================================================ */
+:root{
+  --bg:#0A0E13; --bg2:#0E141B; --panel:#131C25; --panel2:#18242F;
+  --line:rgba(160,190,210,.15); --line2:rgba(160,190,210,.32);
+  --ink:#E7EEF4; --ink2:#A3B4C3; --ink3:#6D7F8F;
+  --ct:#5FD0E2; --he:#F27BA8; --hema:#A088F5; --bone:#F3C57C;
+  --primary-ink:#05121A; --bone-ink:#1E1503;
+  --grain:.04; --glow:0 0 0 1px var(--line), 0 24px 60px -30px rgba(0,0,0,.9);
+  --r:8px;
+}
+html[data-window="soft"]{
+  --bg:#E9E5DE; --bg2:#F1EEE8; --panel:#FCFBF8; --panel2:#F5F2EC;
+  --line:rgba(22,32,42,.15); --line2:rgba(22,32,42,.32);
+  --ink:#12181E; --ink2:#4E5C68; --ink3:#7C8894;
+  --ct:#0B7A8D; --he:#C13A72; --hema:#5843C2; --bone:#8F6410;
+  --primary-ink:#FFFFFF; --bone-ink:#FFFFFF;
+  --grain:.02; --glow:0 0 0 1px var(--line), 0 20px 44px -32px rgba(30,40,50,.5);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Newsreader",Georgia,serif; font-size:17px; line-height:1.62;
+  font-weight:300; overflow-x:hidden;
+  transition:background .5s ease,color .5s ease;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+::selection{background:var(--ct);color:var(--primary-ink)}
+
+h1,h2,h3,h4,.display{
+  font-family:"Bricolage Grotesque","Helvetica Neue",sans-serif;
+  font-weight:700; letter-spacing:-.025em; line-height:1.04; margin:0;
+  font-variation-settings:"wdth" 92;
+}
+.mono,.eyebrow,.btn,.chip,.meta,.tick,.stat-k,.filter,.overlay{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+}
+.eyebrow{
+  font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink3); font-weight:500; display:flex; align-items:center; gap:.7rem;
+}
+.eyebrow::before{content:"";width:14px;height:1px;background:var(--line2);flex:none}
+.eyebrow.ct{color:var(--ct)} .eyebrow.he{color:var(--he)}
+.eyebrow.hema{color:var(--hema)} .eyebrow.bone{color:var(--bone)}
+
+/* ---------------- layout ---------------- */
+.wrap{width:min(1180px,92vw);margin-inline:auto}
+section{padding:clamp(4.5rem,9vw,8rem) 0;position:relative;scroll-margin-top:72px}
+.sec-head{display:flex;flex-wrap:wrap;gap:1rem 2rem;align-items:end;justify-content:space-between;margin-bottom:3rem}
+.sec-head h2{font-size:clamp(2rem,4.4vw,3.15rem)}
+.sec-head p{margin:.85rem 0 0;color:var(--ink2);max-width:52ch;font-size:1.02rem}
+.rule{height:1px;background:var(--line);border:0;margin:0}
+
+/* ---------------- top bar ---------------- */
+.bar{
+  position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  border-bottom:1px solid transparent;transition:border-color .3s,background .3s;
+}
+.bar.stuck{border-bottom-color:var(--line)}
+.bar-in{display:flex;align-items:center;gap:1.5rem;height:60px}
+.mark{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.mark svg{width:20px;height:20px;flex:none}
+.nav{display:flex;gap:1.4rem;margin-left:auto;align-items:center}
+.nav a{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink2);text-decoration:none;padding:.3rem 0;
+  border-bottom:1px solid transparent;transition:color .2s,border-color .2s;
+}
+.nav a:hover{color:var(--ink);border-bottom-color:var(--ct)}
+@media(max-width:900px){.nav{display:none}}
+
+/* windowing switch — the site's light/dark control, named the way a
+   radiologist would name it */
+.window-ctl{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+.nav+.window-ctl{margin-left:1.2rem}
+.window-ctl .tick{font-size:10px;letter-spacing:.14em;color:var(--ink3);text-transform:uppercase}
+.switch{
+  position:relative;display:flex;padding:3px;border:1px solid var(--line2);
+  border-radius:999px;background:var(--panel);cursor:pointer;
+}
+.switch button{
+  all:unset;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;padding:.34rem .7rem;border-radius:999px;color:var(--ink3);
+  transition:color .3s;z-index:1;cursor:pointer;
+}
+.switch button[aria-pressed="true"]{color:var(--primary-ink)}
+.switch .knob{
+  position:absolute;top:3px;bottom:3px;left:3px;border-radius:999px;
+  background:var(--ct);transition:transform .38s cubic-bezier(.6,.05,.2,1),width .38s;
+}
+
+/* ---------------- buttons ---------------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.55rem;padding:.78rem 1.15rem;
+  font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;font-weight:500;
+  border-radius:var(--r);border:1px solid transparent;text-decoration:none;
+  cursor:pointer;transition:transform .18s,box-shadow .22s,background .22s,color .22s,border-color .22s;
+  background:none;color:var(--ink);
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn svg{width:14px;height:14px;flex:none}
+.btn-primary{background:linear-gradient(102deg,var(--ct),var(--hema));color:var(--primary-ink);box-shadow:0 10px 26px -14px var(--ct)}
+.btn-primary:hover{box-shadow:0 16px 34px -14px var(--hema)}
+.btn-outline{border-color:var(--line2);color:var(--ink)}
+.btn-outline:hover{border-color:var(--ct);color:var(--ct);background:color-mix(in srgb,var(--ct) 9%,transparent)}
+.btn-he{border-color:color-mix(in srgb,var(--he) 55%,transparent);color:var(--he);background:color-mix(in srgb,var(--he) 10%,transparent)}
+.btn-he:hover{background:color-mix(in srgb,var(--he) 20%,transparent)}
+.btn-bone{background:var(--bone);color:var(--bone-ink);box-shadow:0 10px 26px -16px var(--bone)}
+.btn-quiet{padding:.5rem 0;color:var(--ink2)}
+.btn-quiet:hover{color:var(--ct)}
+.btn-quiet svg{transition:transform .22s}
+.btn-quiet:hover svg{transform:translateX(4px)}
+.btn-icon{width:42px;height:42px;padding:0;justify-content:center;border:1px solid var(--line2);border-radius:var(--r);color:var(--ink2)}
+.btn-icon:hover{color:var(--ct);border-color:var(--ct)}
+.btn-icon svg{width:17px;height:17px}
+.btn-sm{padding:.42rem .7rem;font-size:10px;letter-spacing:.1em;border-radius:6px}
+:focus-visible{outline:2px solid var(--ct);outline-offset:3px;border-radius:4px}
+
+.chip{
+  display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .68rem;border-radius:999px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);
+  color:var(--ink2);white-space:nowrap;
+}
+.chip.ct{color:var(--ct);border-color:color-mix(in srgb,var(--ct) 40%,transparent);background:color-mix(in srgb,var(--ct) 8%,transparent)}
+.chip.he{color:var(--he);border-color:color-mix(in srgb,var(--he) 40%,transparent);background:color-mix(in srgb,var(--he) 8%,transparent)}
+.chip.hema{color:var(--hema);border-color:color-mix(in srgb,var(--hema) 40%,transparent);background:color-mix(in srgb,var(--hema) 8%,transparent)}
+.chip.bone{color:var(--bone);border-color:color-mix(in srgb,var(--bone) 40%,transparent);background:color-mix(in srgb,var(--bone) 8%,transparent)}
+
+/* ---------------- hero ---------------- */
+.hero{padding:clamp(2rem,4vw,3.2rem) 0 clamp(3rem,6vw,5rem);position:relative}
+.hero::before{
+  content:"";position:absolute;inset:-10% -20% 40%;pointer-events:none;z-index:0;
+  background:radial-gradient(50% 45% at 22% 30%,color-mix(in srgb,var(--ct) 13%,transparent),transparent 70%),
+             radial-gradient(45% 40% at 82% 18%,color-mix(in srgb,var(--hema) 12%,transparent),transparent 70%);
+  filter:blur(12px);
+}
+.viewport{
+  position:relative;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(168deg,var(--bg2),var(--bg) 62%);
+  padding:clamp(1.6rem,4vw,3.4rem);box-shadow:var(--glow);overflow:hidden;
+}
+.viewport::after{ /* faint slice grid, like a CT montage behind the content */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:var(--grain);
+  background-image:linear-gradient(var(--line2) 1px,transparent 1px),linear-gradient(90deg,var(--line2) 1px,transparent 1px);
+  background-size:46px 46px;mask-image:radial-gradient(120% 90% at 78% 12%,#000,transparent 72%);
+}
+/* corner reticles */
+.reticle{position:absolute;width:16px;height:16px;border:1px solid var(--ct);opacity:.55}
+.reticle.tl{top:12px;left:12px;border-right:0;border-bottom:0}
+.reticle.tr{top:12px;right:12px;border-left:0;border-bottom:0}
+.reticle.bl{bottom:12px;left:12px;border-right:0;border-top:0}
+.reticle.br{bottom:12px;right:12px;border-left:0;border-top:0}
+/* DICOM-style corner annotation */
+.overlay{position:absolute;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);line-height:1.7;pointer-events:none}
+.overlay.tl{top:14px;left:38px} .overlay.tr{top:14px;right:38px;text-align:right}
+.overlay.bl{bottom:14px;left:38px} .overlay.br{bottom:14px;right:38px;text-align:right}
+.overlay b{color:var(--ink2);font-weight:500}
+@media(max-width:820px){.overlay.tr,.overlay.br{display:none}.overlay.bl{bottom:10px}}
+
+.hero-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:clamp(2rem,5vw,4rem);align-items:center;position:relative;z-index:2;padding-block:1.4rem}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;padding-block:3.9rem 1rem}}
+h1.name{font-size:clamp(2.6rem,7.4vw,5.3rem);font-weight:800;font-variation-settings:"wdth" 88}
+h1.name .thin{display:block;font-weight:500;font-size:.42em;letter-spacing:-.01em;color:var(--ink2);margin-top:.55rem;font-variation-settings:"wdth" 100}
+.lede{margin:1.6rem 0 0;font-size:clamp(1.05rem,1.9vw,1.28rem);color:var(--ink2);max-width:44ch;line-height:1.6}
+.lede b{color:var(--ink);font-weight:500}
+.cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem}
+
+/* portrait inside a viewport frame */
+.portrait{position:relative;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--panel)}
+.portrait img{width:100%;height:auto;aspect-ratio:4/4.7;object-fit:cover;object-position:50% 14%;filter:saturate(.92) contrast(1.04)}
+.portrait::before{ /* scan sweep */
+  content:"";position:absolute;left:0;right:0;height:26%;z-index:2;
+  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--ct) 16%,transparent),transparent);
+  animation:sweep 7.5s cubic-bezier(.5,0,.5,1) infinite;
+}
+.portrait figcaption{
+  position:absolute;left:0;right:0;bottom:0;z-index:3;padding:.6rem .8rem;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink2);background:linear-gradient(transparent,color-mix(in srgb,var(--bg) 92%,transparent) 55%);
+  display:flex;justify-content:space-between;gap:1rem;
+}
+@keyframes sweep{0%{top:-30%}55%{top:104%}100%{top:104%}}
+@media(max-width:900px){.portrait{max-width:330px;margin-inline:auto}}
+
+/* stat strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:clamp(2rem,4vw,3rem);position:relative;z-index:2}
+.stat{background:var(--bg2);padding:1.15rem 1.25rem}
+.stat-k{display:block;font-size:clamp(1.35rem,2.6vw,1.9rem);font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.stat-v{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:.3rem;font-family:"IBM Plex Mono",monospace;line-height:1.5}
+@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+
+/* ---------------- focus cards ---------------- */
+.focus{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+@media(max-width:900px){.focus{grid-template-columns:1fr}}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:1.6rem 1.5rem;transition:transform .3s,border-color .3s,background .3s;
+}
+.card:hover{transform:translateY(-4px);border-color:var(--line2);background:var(--panel2)}
+.card h3{font-size:1.32rem;margin:.9rem 0 .6rem}
+.card p{margin:0;color:var(--ink2);font-size:.97rem}
+.card .chip{margin-top:1.1rem}
+
+/* ---------------- projects ---------------- */
+.project{
+  display:grid;grid-template-columns:.9fr 1.5fr;gap:clamp(1.5rem,4vw,3.5rem);
+  padding:2.6rem 0;border-top:1px solid var(--line);
+}
+.project:last-of-type{border-bottom:1px solid var(--line)}
+@media(max-width:860px){.project{grid-template-columns:1fr;gap:1.4rem}}
+.project h3{font-size:clamp(1.5rem,2.8vw,2.05rem);margin:.7rem 0 .9rem}
+.project .side{position:sticky;top:90px;align-self:start}
+@media(max-width:860px){.project .side{position:static}}
+.project .side .chip{margin-top:.9rem;margin-right:.35rem}
+/* what / how / result — the structure his own project write-ups use */
+.whr{display:grid;gap:.1rem;margin-top:1.4rem;border-left:1px solid var(--line);padding-left:1.4rem}
+.whr div{padding:.55rem 0;display:grid;grid-template-columns:70px 1fr;gap:1.1rem;align-items:baseline}
+.whr dt,.whr .k{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink3);
+}
+.whr .k.res{color:var(--ct)}
+.whr .v{color:var(--ink2);font-size:1rem}
+.whr .v b{color:var(--ink);font-weight:500}
+@media(max-width:520px){.whr div{grid-template-columns:1fr;gap:.2rem}}
+
+.figs{display:grid;grid-template-columns:1.55fr 1fr;gap:1.2rem;margin-top:2.8rem;align-items:start}
+@media(max-width:860px){.figs{grid-template-columns:1fr}}
+.figure{margin:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff}
+.figure img{padding:.6rem}
+.figure img{width:100%;object-fit:cover}
+.figure figcaption{padding:.8rem 1rem;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);border-top:1px solid var(--line)}
+
+/* ---------------- publications ---------------- */
+.filters{display:flex;flex-wrap:wrap;gap:.5rem}
+.filter{
+  all:unset;cursor:pointer;padding:.42rem .85rem;border-radius:999px;border:1px solid var(--line);
+  font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink2);transition:all .22s;
+}
+.filter:hover{border-color:var(--line2);color:var(--ink)}
+.filter[aria-pressed="true"]{background:var(--ct);border-color:var(--ct);color:var(--primary-ink)}
+.pubs{list-style:none;margin:2.2rem 0 0;padding:0}
+.pub{display:grid;grid-template-columns:78px 1fr;gap:1.6rem;padding:1.5rem 1rem 1.5rem 0;border-top:1px solid var(--line);
+     border-radius:var(--r);transition:background .3s}
+.pub:hover{background:color-mix(in srgb,var(--panel) 60%,transparent)}
+.pub:last-child{border-bottom:1px solid var(--line)}
+@media(max-width:640px){.pub{grid-template-columns:1fr;gap:.5rem}}
+.pub-year{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink3);letter-spacing:.06em;padding-top:.35rem}
+.pub h3{font-size:1.17rem;font-weight:700;line-height:1.32;margin:0 0 .5rem}
+.pub h3 a{text-decoration:none;background-image:linear-gradient(var(--ct),var(--ct));background-size:0 1px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .3s}
+.pub h3 a:hover{background-size:100% 1px;color:var(--ct)}
+.pub .auth{font-size:.94rem;color:var(--ink2);margin:0 0 .3rem}
+.pub .auth b{color:var(--ink);font-weight:500}
+.pub .venue{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--ink3);margin:0}
+.pub .note{margin:.7rem 0 0;font-size:.96rem;color:var(--ink2);border-left:1px solid var(--line2);padding-left:.9rem}
+.pub-foot{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.95rem}
+.qr-panel{
+  display:none;margin-top:1.1rem;padding:1rem;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel);align-items:center;gap:1.1rem;
+}
+.qr-panel.open{display:flex}
+.qr-panel .qr{width:104px;flex:none}
+.qr-panel p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;color:var(--ink3);word-break:break-all;line-height:1.7}
+.qr{background:#fff;border-radius:6px;padding:7px}
+.qr svg{display:block;width:100%;height:auto}
+.pub-count{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink3);letter-spacing:.08em}
+.feed-note{display:flex;align-items:center;gap:.6rem;margin-top:1.6rem;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ct);flex:none;box-shadow:0 0 0 0 color-mix(in srgb,var(--ct) 60%,transparent);animation:pulse 2.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ct) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+
+/* ---------------- path / timeline ---------------- */
+.path{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4rem)}
+@media(max-width:860px){.path{grid-template-columns:1fr}}
+.tl{list-style:none;margin:1.4rem 0 0;padding:0 0 0 1.6rem;border-left:1px solid var(--line)}
+.tl li{position:relative;padding:0 0 1.9rem}
+.tl li::before{content:"";position:absolute;left:calc(-1.6rem - 4px);top:.5rem;width:7px;height:7px;border-radius:50%;background:var(--bg);border:1px solid var(--ct)}
+.tl li.now::before{background:var(--ct);box-shadow:0 0 0 4px color-mix(in srgb,var(--ct) 18%,transparent)}
+.tl .when{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.tl h3{font-size:1.12rem;margin:.35rem 0 .2rem}
+.tl .where{color:var(--ink2);font-size:.96rem;margin:0}
+.tl .did{color:var(--ink2);font-size:.95rem;margin:.5rem 0 0}
+
+/* ---------------- toolkit ---------------- */
+.kit{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+@media(max-width:760px){.kit{grid-template-columns:1fr}}
+.kit-row{background:var(--bg2);padding:1.35rem 1.5rem}
+.kit-row h3{font-size:.95rem;letter-spacing:.02em;margin:0 0 .8rem;color:var(--ink)}
+.kit-row .tags{display:flex;flex-wrap:wrap;gap:.4rem}
+
+/* ---------------- recognition ---------------- */
+.rec{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem}
+@media(max-width:860px){.rec{grid-template-columns:1fr}}
+.rec ul{list-style:none;margin:.9rem 0 0;padding:0}
+.rec li{padding:.6rem 0;border-top:1px solid var(--line);display:flex;gap:.9rem;align-items:baseline;color:var(--ink2);font-size:.97rem}
+.rec li span.y{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink3);flex:none;width:52px;letter-spacing:.06em}
+.rec li b{color:var(--ink);font-weight:500}
+
+/* ---------------- gallery ---------------- */
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+@media(max-width:900px){.gal{grid-template-columns:repeat(2,1fr)}}
+.gal figure{margin:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.gal img{aspect-ratio:4/3;object-fit:cover;width:100%;transition:transform .5s,filter .5s;filter:saturate(.9)}
+.gal figure:hover img{transform:scale(1.04);filter:saturate(1)}
+.gal figure{position:relative}
+.gal figcaption{padding:.65rem .8rem;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);border-top:1px solid var(--line)}
+
+/* ---------------- connect / QR wall ---------------- */
+.connect{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(2rem,5vw,4rem);align-items:start}
+@media(max-width:900px){.connect{grid-template-columns:1fr}}
+.qr-wall{display:grid;grid-template-columns:repeat(5,1fr);gap:.9rem}
+@media(max-width:1100px){.qr-wall{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:900px){.qr-wall{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:640px){.qr-wall{grid-template-columns:repeat(2,1fr)}}
+.qr-card{text-decoration:none;text-align:center;transition:transform .3s}
+.qr-card:hover{transform:translateY(-4px)}
+.qr-card .qr{margin-bottom:.6rem}
+.qr-card span{display:block;min-height:2.2em;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);line-height:1.5}
+.qr-card:hover span{color:var(--ct)}
+.contact-list{list-style:none;margin:1.6rem 0 0;padding:0}
+.contact-list li{padding:.75rem 0;border-top:1px solid var(--line);display:flex;gap:1rem;align-items:baseline}
+.contact-list .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);width:74px;flex:none}
+.contact-list a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line2)}
+.contact-list a:hover{color:var(--ct);border-color:var(--ct)}
+
+footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
+.foot{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+
+/* ---------------- press feature ---------------- */
+.press{
+  position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  background:linear-gradient(150deg,color-mix(in srgb,var(--bone) 9%,var(--panel)),var(--panel) 58%);
+  display:grid;grid-template-columns:1.5fr .85fr;gap:clamp(1.6rem,4vw,3.4rem);
+  padding:clamp(1.8rem,4vw,3rem);
+}
+.press::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--bone)}
+@media(max-width:860px){.press{grid-template-columns:1fr}}
+.press blockquote{
+  margin:1.3rem 0 0;font-size:clamp(1.25rem,2.5vw,1.72rem);line-height:1.34;font-weight:400;
+  font-family:"Newsreader",Georgia,serif;color:var(--ink);
+}
+.press blockquote::before{content:"\201C";color:var(--bone);margin-right:.1em}
+.press cite{display:block;margin-top:1rem;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-style:normal}
+.press-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2rem;border-top:1px solid var(--line);padding-top:1.3rem}
+.press-facts b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1.45rem;font-weight:700;letter-spacing:-.02em}
+.press-facts span{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);line-height:1.5}
+@media(max-width:640px){.press-facts{grid-template-columns:1fr 1fr}}
+.press-side{display:flex;flex-direction:column;align-items:flex-start;gap:1.1rem;justify-content:center}
+.press-side .qr{width:120px}
+
+/* ---------------- copy button ---------------- */
+.copy{
+  all:unset;cursor:pointer;margin-left:.7rem;padding:.16rem .5rem;border-radius:999px;
+  border:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:9px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);transition:all .2s;
+}
+.copy:hover{color:var(--ct);border-color:var(--ct)}
+.copy.done{color:var(--ct);border-color:var(--ct)}
+
+/* ---------------- scroll progress ---------------- */
+#prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:99;background:linear-gradient(90deg,var(--ct),var(--hema),var(--he));transition:width .1s linear}
+
+/* ---------------- reveal ---------------- */
+.rise{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+.rise.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .rise{opacity:1;transform:none}
+  .portrait::before{display:none}
+}
+@media print{
+  .bar,.qr-wall,.gal,.portrait::before{display:none}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+
+<body>
+<a class="btn btn-quiet" href="#work" style="position:absolute;left:-9999px;top:0" onfocus="this.style.cssText='position:fixed;left:1rem;top:1rem;z-index:99;background:var(--panel);padding:.7rem 1rem'">Skip to content</a>
+
+<div id="prog"></div>
+<header class="bar" id="bar">
+  <div class="wrap bar-in">
+    <a class="mark" href="#top">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><g stroke="currentColor" stroke-width="1.5" fill="none"><circle cx="16" cy="16" r="7"/><path d="M16 2v7M16 23v7M2 16h7M23 16h7"/></g></svg>
+      <span>Hoq</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#publications">Publications</a>
+      <a href="#path">Path</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#recognition">Recognition</a>
+      <a href="#connect">Connect</a>
+    </nav>
+    <div class="window-ctl">
+      <span class="tick" aria-hidden="true">W/L</span>
+      <div class="switch" id="switch" role="group" aria-label="Display window">
+        <span class="knob" id="knob"></span>
+        <button type="button" data-window="lung" aria-pressed="true">Lung</button>
+        <button type="button" data-window="soft" aria-pressed="false">Soft tissue</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============================ HERO ============================ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="viewport">
+      <span class="reticle tl"></span><span class="reticle tr"></span>
+      <span class="reticle bl"></span><span class="reticle br"></span>
+      <div class="overlay tl"><b>HOQ, MD ENAMUL</b><br>UAMS · BIOMEDICAL INFORMATICS</div>
+      <div class="overlay tr">SERIES 2021–2026<br>IMAGING TRACK</div>
+      <div class="overlay bl" id="wlReadout">WL −600 · WW 1500</div>
+      <div class="overlay br">LITTLE ROCK, AR<br>34.7°N 92.3°W</div>
+
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow ct rise">Medical imaging AI · Ph.D. candidate</p>
+          <h1 class="name rise" style="margin-top:1.1rem">Md Enamul Hoq
+            <span class="thin">I build imaging models that survive contact with a clinic.</span>
+          </h1>
+          <p class="lede rise">Five years of turning raw screening CT and whole-slide pathology into systems that hold up under real prevalence, real scanners and real regulators — <b>50M+ slices curated</b>, foundation models trained on A100 clusters, five institutions training together without moving a single patient record.</p>
+          <div class="cta rise">
+            <a class="btn btn-primary" href="#publications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+              Read the work
+            </a>
+            <a class="btn btn-outline" href="assets/Md_Enamul_Hoq_CV.pdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+              Download CV
+            </a>
+            <a class="btn btn-he" href="assets/Md_Enamul_Hoq_Resume.pdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l5 5v13H6z"/><path d="M15 3v5h5"/></svg>
+              Résumé
+            </a>
+            <a class="btn btn-outline" href="mailto:mdenamulmte@gmail.com?subject=Hello%20from%20your%20website">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+              Email
+            </a>
+          </div>
+        </div>
+
+        <figure class="portrait rise" style="margin:0">
+          <img src="{{PHOTO}}" alt="Portrait of Md Enamul Hoq" width="680" height="867">
+          <figcaption><span>ACQ 2026</span><span>UAMS · DBMI</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="stats rise">
+        <div class="stat"><span class="stat-k">50M+</span><span class="stat-v">CT slices curated<br>and embedded</span></div>
+        <div class="stat"><span class="stat-k">5</span><span class="stat-v">Institutions training<br>federated</span></div>
+        <div class="stat"><span class="stat-k" data-stat="pubs">12</span><span class="stat-v">Publications, <span data-stat="first">7</span> as<br>first author</span></div>
+        <div class="stat"><span class="stat-k">15+</span><span class="stat-v">Radiologists and<br>clinicians in the loop</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOCUS ============================ -->
+<section id="focus">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow">What I work on</p>
+        <h2 style="margin-top:1rem">Three problems I keep<br>coming back to</h2>
+      </div>
+      <p>Lung cancer screening produces enormous volumes of imaging and enormous numbers of false alarms. Most of my work sits between those two facts.</p>
+    </div>
+    <div class="focus">
+      <article class="card rise">
+        <p class="eyebrow ct">Radiology</p>
+        <h3>Making screening CT tractable</h3>
+        <p>Whole-volume 3D training is expensive and hard to reproduce. I showed that frozen, native-resolution 2D embeddings reach comparable patient-level performance at a fraction of the compute — and behave the way radiologists actually read, slice by slice.</p>
+        <span class="chip ct">RAD-DINO</span> <span class="chip ct">NLST</span> <span class="chip ct">Calibration</span>
+      </article>
+      <article class="card rise">
+        <p class="eyebrow he">Pathology</p>
+        <h3>Teaching models to describe tissue</h3>
+        <p>Captioning a whole-slide image is easy to do badly and dangerous to do wrong. I ground generation in retrieved cases so the model describes what it can point to, and measured the drop in unsafe output.</p>
+        <span class="chip he">Whole-slide imaging</span> <span class="chip he">Vision–language</span>
+      </article>
+      <article class="card rise">
+        <p class="eyebrow hema">Translation</p>
+        <h3>Proving it holds up outside the lab</h3>
+        <p>A model that only works on your own scanner is a demo. I build the unglamorous half: quality control, leakage-safe splits, federated training across five sites, phantom-based drift monitoring, and documentation that a reviewer can audit.</p>
+        <span class="chip hema">NVIDIA FLARE</span> <span class="chip hema">GMLP</span> <span class="chip hema">510(k)-aware</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WORK ============================ -->
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow">Selected systems</p>
+        <h2 style="margin-top:1rem">Six things I built,<br>and what came of them</h2>
+      </div>
+      <p>Each of these started as a gap between a paper and a hospital. What / how / result, in that order — no other framing survives a clinical review anyway.</p>
+    </div>
+
+    <article class="project rise">
+      <div class="side">
+        <p class="eyebrow ct">Dissertation · 2022–2026</p>
+        <h3>LCS-DINO</h3>
+        <span class="chip ct">Foundation model</span><span class="chip ct">CT</span><span class="chip">A100 · Slurm</span>
+      </div>
+      <div>
+        <div class="whr">
+          <div><span class="k">What</span><span class="v">An end-to-end pipeline that estimates lung cancer risk from screening CT at native resolution, from DICOM ingestion to a calibrated patient-level score.</span></div>
+          <div><span class="k">How</span><span class="v">Self-supervised RAD-DINO embeddings over 50M+ slices, mean aggregation to the patient, isotonic calibration, and a fixed leakage-safe split with repeated imbalanced test draws at roughly screening prevalence.</span></div>
+          <div><span class="k res">Result</span><span class="v"><b>ROC-AUC 0.817 and calibrated PR-AUC 0.705</b> at ~6% prevalence, with far lower compute than volumetric training. First-author paper in the Journal of Imaging Informatics in Medicine, 2025.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="project rise">
+      <div class="side">
+        <p class="eyebrow ct">Accepted · MIDL 2026</p>
+        <h3>Virtual-Eyes</h3>
+        <span class="chip ct">Quality control</span><span class="chip">16-bit</span>
+      </div>
+      <div>
+        <div class="whr">
+          <div><span class="k">What</span><span class="v">A quality-control layer that decides which CT series are fit to enter a risk model at all, instead of letting preprocessing stay an undocumented footnote.</span></div>
+          <div><span class="k">How</span><span class="v">Rule-driven, quantitative checks on a strict 512×512 16-bit grid — rejecting scouts, partial chest coverage and wrong fields of view — validated against how the downstream model actually behaves.</span></div>
+          <div><span class="k res">Result</span><span class="v">Measured, separable gains for generalist versus specialist models, and a preprocessing step that can be written into a protocol. <b>Accepted at MIDL 2026</b>, first author.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="project rise">
+      <div class="side">
+        <p class="eyebrow he">Mayo Clinic · 2025</p>
+        <h3>Retrieval-guided pathology captioning</h3>
+        <span class="chip he">WSI</span><span class="chip he">LLM</span>
+      </div>
+      <div>
+        <div class="whr">
+          <div><span class="k">What</span><span class="v">Content-based retrieval and automatic captioning for histopathology whole-slide images, built so the caption stays tied to real evidence.</span></div>
+          <div><span class="k">How</span><span class="v">Vision foundation-model embeddings for retrieval, a hybrid rule-based and LLM summarisation pipeline, and retrieval-guided generation that constrains what the model is allowed to claim.</span></div>
+          <div><span class="k res">Result</span><span class="v">Semantic alignment above <b>0.82 cosine similarity</b> with fewer unsafe and hallucinated captions. Top-ten poster at the Mayo Clinic AI Summit; accepted to Ital-IA 2026, first author.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="project rise">
+      <div class="side">
+        <p class="eyebrow hema">Site lead · 2025–present</p>
+        <h3>Federated LDCT across five institutions</h3>
+        <span class="chip hema">NVIDIA FLARE</span><span class="chip hema">Privacy</span>
+      </div>
+      <div>
+        <div class="whr">
+          <div><span class="k">What</span><span class="v">Lung screening models trained jointly by UAMS, Moffitt, Vanderbilt, UCLA and the University of Pittsburgh, with no raw patient data leaving any site. I lead UAMS as Site 2.</span></div>
+          <div><span class="k">How</span><span class="v">NVIDIA FLARE for secure model updates, harmonised multi-site curation, leakage-safe cross-site splits, and evaluation protocols that run identically at every institution.</span></div>
+          <div><span class="k res">Result</span><span class="v">Better detection and lower projected follow-up workload than any single site could reach alone. The approach took <b>three of five categories</b> at the CMU–NVIDIA federated learning hackathon, 2026.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="project rise">
+      <div class="side">
+        <p class="eyebrow bone">Winthrop P. Rockefeller Cancer Institute</p>
+        <h3>Synthetic-phantom monitoring of a deployed AI</h3>
+        <span class="chip bone">Post-market</span><span class="chip bone">IRB</span>
+      </div>
+      <div>
+        <div class="whr">
+          <div><span class="k">What</span><span class="v">A way to answer the question nobody asks after purchase: is the commercial nodule-detection software still measuring the same thing it measured last year?</span></div>
+          <div><span class="k">How</span><span class="v">MATLAB phantom modelling that injects synthetic pulmonary nodules into real DICOM volumes, plus a purpose-built database and analysis workflow, under an IRB-approved prospective protocol.</span></div>
+          <div><span class="k res">Result</span><span class="v">A reproducible, auditable method for continuous evaluation of clinical AI — the kind of surveillance <b>good machine learning practice asks for and almost nobody has</b>.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="project rise">
+      <div class="side">
+        <p class="eyebrow he">NeurIPS 2025 · co-author</p>
+        <h3>Crop-guided diffusion for tissue synthesis</h3>
+        <span class="chip he">Diffusion</span><span class="chip he">Augmentation</span>
+      </div>
+      <div>
+        <div class="whr">
+          <div><span class="k">What</span><span class="v">A generative model that synthesises heterogeneous tissue to enlarge histopathology training sets where real annotated examples are scarce.</span></div>
+          <div><span class="k">How</span><span class="v">Semantic and visual crop guidance, so generated regions stay consistent with the tissue context they are dropped into.</span></div>
+          <div><span class="k res">Result</span><span class="v">Peer-reviewed acceptance at <b>NeurIPS 2025</b>, with a usable augmentation route for pathology models.</span></div>
+        </div>
+      </div>
+    </article>
+
+    <div class="figs rise">{{FIGURES}}</div>
+  </div>
+</section>
+
+<!-- ============================ PRESS ============================ -->
+<section id="press" style="padding-top:0">
+  <div class="wrap">
+    <div class="press rise">
+      <div>
+        <p class="eyebrow bone">In the press · CMU Libraries, February 2026</p>
+        <h2 style="font-size:clamp(1.7rem,3.4vw,2.5rem);margin-top:1rem">Champion in three of five categories at the CMU–NVIDIA federated learning hackathon</h2>
+        <p style="color:var(--ink2);margin:1.1rem 0 0;max-width:56ch">Carnegie Mellon University Libraries and NVIDIA ran a three-day bioinformatics hackathon in January 2026 on keeping health data where it lives while still training models across institutions. Every team built on NVIDIA FLARE. Carnegie Mellon quoted me in their write-up of it.</p>
+        <blockquote>one of the most productive and rewarding hackathons I have ever participated in&#8221;</blockquote>
+        <cite>Md Enamul Hoq, quoted by CMU Libraries</cite>
+        <div class="press-facts">
+          <div><b>100+</b><span>Participants,<br>largest to date</span></div>
+          <div><b>27</b><span>Universities,<br>7 countries</span></div>
+          <div><b>10</b><span>Teams, one<br>problem each</span></div>
+          <div><b>3 of 5</b><span>Categories<br>won</span></div>
+        </div>
+      </div>
+      <div class="press-side">
+        {{QR_CMU}}
+        <a class="btn btn-bone" href="https://www.library.cmu.edu/about/news/2026-02/NVIDIA-hackathon" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          Read the CMU story
+        </a>
+        <a class="btn btn-quiet" href="https://github.com/collaborativebioinformatics" rel="noopener">
+          Team pipelines on GitHub
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PUBLICATIONS ============================ -->
+<section id="publications">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow">Publications</p>
+        <h2 style="margin-top:1rem">Papers, preprints<br>and abstracts</h2>
+      </div>
+      <div>
+        <p style="margin-bottom:1.2rem">This list keeps itself current. A weekly job checks the literature for new work under my name and adds it here.</p>
+        <div class="filters" id="filters" role="group" aria-label="Filter publications"></div>
+      </div>
+    </div>
+    <p class="pub-count" id="pubCount">Loading…</p>
+    <ul class="pubs" id="pubList"></ul>
+    <div class="feed-note"><span class="dot"></span><span>Auto-updated from OpenAlex · last checked <span id="lastUpdated">—</span></span></div>
+    <div class="cta" style="margin-top:1.6rem">
+      <a class="btn btn-outline" href="https://scholar.google.com/citations?user=mP_LvPoAAAAJ&hl=en">Google Scholar</a>
+      <a class="btn btn-outline" href="https://www.researchgate.net/profile/Md-Enamul-Hoq-2">ResearchGate</a>
+      <a class="btn btn-outline" href="https://github.com/Enamul-Hoq">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PATH ============================ -->
+<section id="path">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow">Path</p>
+        <h2 style="margin-top:1rem">Where the work<br>was done</h2>
+      </div>
+      <p>Physics and computational imaging first, then medicine. The habit of measuring things carefully came from the first half.</p>
+    </div>
+    <div class="path">
+      <div class="rise">
+        <p class="eyebrow ct">Positions</p>
+        <ul class="tl">
+          <li class="now">
+            <span class="when">07/2021 — present</span>
+            <h3>Graduate Research Assistant, Medical Imaging AI</h3>
+            <p class="where">University of Arkansas for Medical Sciences · Little Rock, AR</p>
+            <p class="did">Built the lung screening pipeline end to end, curated national cohorts in TCIA and the NCI Imaging Data Commons, scaled training across A100 clusters, and mentored three Ph.D. students and one M.D. student.</p>
+          </li>
+          <li class="now">
+            <span class="when">06/2025 — present</span>
+            <h3>Site Lead, federated LDCT screening (Site 2)</h3>
+            <p class="where">UAMS, with Moffitt, Vanderbilt, UCLA and U. Pittsburgh</p>
+            <p class="did">Privacy-preserving training workflows and harmonised multi-site data across a five-institution program.</p>
+          </li>
+          <li>
+            <span class="when">02/2025 — 07/2025</span>
+            <h3>AI &amp; Informatics Research Intern</h3>
+            <p class="where">Mayo Clinic · Rochester, MN</p>
+            <p class="did">Multimodal pathology retrieval and captioning; co-led a workshop on fine-tuning and deploying vision–language models in clinical research.</p>
+          </li>
+          <li>
+            <span class="when">08/2019 — 12/2020</span>
+            <h3>Graduate Research &amp; Teaching Associate; Lab Manager</h3>
+            <p class="where">Southeastern Louisiana University · Hammond, LA</p>
+            <p class="did">MATLAB pipelines for digital image correlation; supported 13+ researchers; taught Physics 101/102 laboratories.</p>
+          </li>
+          <li>
+            <span class="when">09/2018 — 02/2019</span>
+            <h3>Research Intern, Multimedia Lab</h3>
+            <p class="where">National Chung Cheng University · Chiayi, Taiwan</p>
+            <p class="did">Depth-estimation algorithms for 2D→3D video conversion.</p>
+          </li>
+          <li>
+            <span class="when">08/2017 — 07/2018</span>
+            <h3>R&amp;D Engineer</h3>
+            <p class="where">TN Solution · Karlsruhe, Germany &amp; Ho Chi Minh City, Vietnam</p>
+            <p class="did">Image and signal processing for PCB fault diagnosis; IoT project delivery.</p>
+          </li>
+        </ul>
+      </div>
+      <div class="rise">
+        <p class="eyebrow hema">Education</p>
+        <ul class="tl">
+          <li class="now">
+            <span class="when">Expected May 2026</span>
+            <h3>Ph.D., Biomedical Informatics — Imaging Track</h3>
+            <p class="where">University of Arkansas for Medical Sciences</p>
+            <p class="did">Dissertation: <i>Foundation Models for Lung Cancer Screening CT</i> (LCS-DINO, native-resolution 2D).</p>
+          </li>
+          <li>
+            <span class="when">December 2020</span>
+            <h3>M.S., Engineering Physics</h3>
+            <p class="where">Southeastern Louisiana University · Hammond, LA</p>
+            <p class="did">Thesis: image correlation for LDPE film deformation — computational imaging in MATLAB.</p>
+          </li>
+        </ul>
+        <p class="eyebrow bone" style="margin-top:2.4rem">Certifications</p>
+        <ul class="tl" style="margin-top:1.2rem">
+          <li>
+            <span class="when">2024</span>
+            <h3>Lung Cancer Screening Education</h3>
+            <p class="where">American College of Radiology</p>
+          </li>
+          <li>
+            <span class="when">SIIM · AAPM · RSNA</span>
+            <h3>National Imaging Informatics Course</h3>
+            <p class="where">Plus 20+ certifications from NVIDIA, Google and Coursera</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TOOLKIT ============================ -->
+<section id="toolkit">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow">Toolkit</p>
+        <h2 style="margin-top:1rem">What I reach for</h2>
+      </div>
+      <p>Grouped by the job it does, not by how impressive the logo is.</p>
+    </div>
+    <div class="kit rise">
+      <div class="kit-row"><h3>Modelling</h3><div class="tags">
+        <span class="chip hema">2D &amp; 3D CNNs</span><span class="chip hema">Vision Transformers</span><span class="chip hema">RAD-DINO</span><span class="chip hema">DINOv2</span><span class="chip hema">Diffusion models</span><span class="chip hema">Vision–language models</span><span class="chip hema">Self-supervised learning</span><span class="chip hema">Transfer learning</span>
+      </div></div>
+      <div class="kit-row"><h3>Imaging &amp; standards</h3><div class="tags">
+        <span class="chip ct">DICOM</span><span class="chip ct">PACS</span><span class="chip ct">DICOMweb</span><span class="chip ct">Whole-slide imaging</span><span class="chip ct">RadLex</span><span class="chip ct">SNOMED</span><span class="chip ct">3D Slicer</span><span class="chip ct">ITK-SNAP</span><span class="chip ct">TCIA · TCGA · IDC</span>
+      </div></div>
+      <div class="kit-row"><h3>Code &amp; compute</h3><div class="tags">
+        <span class="chip">Python</span><span class="chip">PyTorch</span><span class="chip">TensorFlow · Keras</span><span class="chip">C/C++</span><span class="chip">Java</span><span class="chip">MATLAB</span><span class="chip">Linux · Slurm</span><span class="chip">A100 multi-GPU</span><span class="chip">GCP · AWS · BigQuery</span><span class="chip">NVIDIA FLARE</span>
+      </div></div>
+      <div class="kit-row"><h3>Evaluation</h3><div class="tags">
+        <span class="chip">ROC/AUC · PR/F1</span><span class="chip">Calibration</span><span class="chip">Threshold optimisation</span><span class="chip">Prevalence matching</span><span class="chip">Drift &amp; stability</span><span class="chip">Reproducibility</span>
+      </div></div>
+      <div class="kit-row"><h3>Data engineering</h3><div class="tags">
+        <span class="chip">Large-scale imaging pipelines</span><span class="chip">Leakage-safe splits</span><span class="chip">Multi-site harmonisation</span><span class="chip">Metadata normalisation</span><span class="chip">DUAs · PHI de-identification</span>
+      </div></div>
+      <div class="kit-row"><h3>Translation &amp; quality</h3><div class="tags">
+        <span class="chip bone">FDA 510(k) / De Novo documentation</span><span class="chip bone">Good Machine Learning Practice</span><span class="chip bone">IRB prospective validation</span><span class="chip bone">Continuous monitoring</span><span class="chip bone">Auditable experiments</span>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ RECOGNITION ============================ -->
+<section id="recognition">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow">Recognition &amp; service</p>
+        <h2 style="margin-top:1rem">Awards, funding,<br>and the review queue</h2>
+      </div>
+      <p>Reviewing and mentoring take real hours, so they belong on the same page as the awards.</p>
+    </div>
+    <div class="rec">
+      <div class="card rise">
+        <p class="eyebrow bone">Honors</p>
+        <ul>
+          <li><span class="y">2026</span><span><b>Champion, three of five categories</b> — CMU–NVIDIA Federated Learning Hackathon</span></li>
+          <li><span class="y">2025</span><span><b>Top-ten poster</b> — Mayo Clinic AI Summit</span></li>
+          <li><span class="y">2024</span><span><b>Second place</b> — Datathon.org, Emory University School of Medicine</span></li>
+          <li><span class="y">24–25</span><span>Travel grants — SIIM, SCCM, HITLAB</span></li>
+        </ul>
+      </div>
+      <div class="card rise">
+        <p class="eyebrow ct">Grants contributed to</p>
+        <ul>
+          <li><span class="y">NCI</span><span><b>U24 CA215109</b> — The Cancer Imaging Archive, sustainment and scalability</span></li>
+          <li><span class="y">UAMS</span><span><b>Team Science Award, $100K</b> — clinical AI and imaging analytics (lead contributor)</span></li>
+          <li><span class="y">UAMS</span><span><b>Team Science Award, $40K</b> — translational imaging studies (lead contributor)</span></li>
+          <li><span class="y">EU</span><span><b>EuCanImage</b>, €805,479 — multi-centre imaging AI ecosystem</span></li>
+          <li><span class="y">Korea</span><span><b>MOTIE</b> international R&amp;D program P0006842</span></li>
+        </ul>
+      </div>
+      <div class="card rise">
+        <p class="eyebrow hema">Service</p>
+        <ul>
+          <li><span class="y">2026</span><span><b>Area Chair</b>, Challenges Track — MICCAI</span></li>
+          <li><span class="y">2026</span><span><b>Ethics Reviewer</b> — NeurIPS</span></li>
+          <li><span class="y">25–</span><span>Program Reviewer — SIIM Annual Conference</span></li>
+          <li><span class="y">24–</span><span>Ad hoc reviewer — Frontiers in Medicine (6+ manuscripts), Journal of Thoracic Disease</span></li>
+          <li><span class="y">2024</span><span>Poster judge — UAMS Summer Research Program (17 posters)</span></li>
+        </ul>
+      </div>
+      <div class="card rise">
+        <p class="eyebrow he">Teaching</p>
+        <ul>
+          <li><span class="y">23–</span><span><b>Research mentorship</b>, UAMS — three Ph.D. students and one M.D. student in imaging AI, GPU/HPC workflows and reproducible research</span></li>
+          <li><span class="y">2025</span><span>Workshop co-lead — practical AI in healthcare, Mayo Clinic</span></li>
+          <li><span class="y">19–20</span><span>Physics 101/102 laboratories and lectures — SLU</span></li>
+          <li><span class="y">10–17</span><span>Foundation-year physics and mathematics — 10,000+ students</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ GALLERY ============================ -->
+<section id="field">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow">Field notes</p>
+        <h2 style="margin-top:1rem">Conferences, posters,<br>datathons</h2>
+      </div>
+      <p>Talks at the NCI Early Detection Research Network, SIIM and UAMS; datathons at Emory; the occasional poster judging shift.</p>
+    </div>
+    <div class="gal rise">{{GALLERY}}</div>
+  </div>
+</section>
+
+<!-- ============================ CONNECT ============================ -->
+<section id="connect">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow ct">Connect</p>
+        <h2 style="margin-top:1rem">Point a camera<br>at any of these</h2>
+      </div>
+      <p>Built for conference badges and poster corners. The top row reaches me; the bottom row opens five papers, four of them first-author.</p>
+    </div>
+    <div class="connect">
+      <div class="rise">
+        <ul class="contact-list">
+          <li><span class="k">Email</span><span><a href="mailto:mdenamulmte@gmail.com?subject=Hello%20from%20your%20website">mdenamulmte@gmail.com</a>
+            <button class="copy" type="button" data-copy="mdenamulmte@gmail.com">Copy</button></span></li>
+          <li><span class="k">Academic</span><span><a href="mailto:mhoq@uams.edu">mhoq@uams.edu</a>
+            <button class="copy" type="button" data-copy="mhoq@uams.edu">Copy</button></span></li>
+          <li><span class="k">Phone</span><a href="tel:+19856026909">+1 (985) 602-6909</a></li>
+          <li><span class="k">Based in</span><span>Little Rock, Arkansas</span></li>
+          <li><span class="k">Open to</span><span>Research scientist and ML engineer roles in clinical imaging AI, from May 2026</span></li>
+        </ul>
+        <div class="cta" style="margin-top:1.8rem">
+          <a class="btn btn-primary" href="mailto:mdenamulmte@gmail.com?subject=Hello%20from%20your%20website">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            Start a conversation</a>
+          <button class="btn btn-outline" type="button" data-copy="mdenamulmte@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+            Copy address</button>
+          <a class="btn btn-bone" href="assets/Md_Enamul_Hoq_CV.pdf">Full CV (PDF)</a>
+        </div>
+        <p style="color:var(--ink3);font-size:.92rem;margin-top:2rem">References available on request: Prof. Fred W. Prior, Dr. Lawrence Tarbox and Dr. Donald J. Johann Jr., all at UAMS.</p>
+      </div>
+      <div class="qr-wall rise">
+        {{QR_WALL}}
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 Md Enamul Hoq</span>
+    <span>Lung window · WL −600 · WW 1500</span>
+    <span>Built with GitHub Pages</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- windowing switch (this site's light/dark control) ---------- */
+(function(){
+  const root=document.documentElement, sw=document.getElementById('switch'),
+        knob=document.getElementById('knob'), readout=document.getElementById('wlReadout'),
+        btns=[...sw.querySelectorAll('button')];
+  const WL={lung:'WL −600 · WW 1500',soft:'WL 40 · WW 400'};
+  function place(){
+    const on=btns.find(b=>b.getAttribute('aria-pressed')==='true');
+    knob.style.width=on.offsetWidth+'px';
+    knob.style.transform='translateX('+(on.offsetLeft-3)+'px)';
+  }
+  function set(mode){
+    root.setAttribute('data-window',mode);
+    btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.window===mode)));
+    readout.textContent=WL[mode];
+    place();
+  }
+  btns.forEach(b=>b.addEventListener('click',()=>set(b.dataset.window)));
+  window.addEventListener('resize',place);
+  window.addEventListener('load',place); place();
+})();
+
+/* ---------- sticky bar hairline + scroll progress ---------- */
+const bar=document.getElementById('bar'), prog=document.getElementById('prog');
+addEventListener('scroll',()=>{
+  bar.classList.toggle('stuck',scrollY>10);
+  const h=document.body.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+},{passive:true});
+
+/* ---------- copy an address without needing a mail client ---------- */
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-copy]'); if(!b) return;
+  const text=b.dataset.copy, was=b.textContent;
+  try{ await navigator.clipboard.writeText(text); }
+  catch{ const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t);
+         t.select(); document.execCommand('copy'); t.remove(); }
+  b.textContent='Copied'; b.classList.add('done');
+  setTimeout(()=>{b.textContent=was; b.classList.remove('done');},1800);
+});
+
+/* ---------- reveal on scroll ---------- */
+(function(){
+  const io=new IntersectionObserver((es)=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+  }),{rootMargin:'0px 0px -8% 0px',threshold:.06});
+  document.querySelectorAll('.rise').forEach((el,i)=>{el.style.transitionDelay=(i%4)*70+'ms';io.observe(el);});
+})();
+
+/* ---------- publications: rendered from data/publications.json ---------- */
+const QR = {{QR_DATA}};
+const FALLBACK = {{PUBS}};
+
+const FILTERS=[
+  ['all','Everything'],
+  ['first','First author'],
+  ['journal','Journal &amp; conference'],
+  ['accepted','Accepted 2026'],
+  ['preprint','Preprints'],
+  ['abstract','Abstracts']
+];
+let PUBS=[], active='all';
+
+function matches(p,f){
+  if(f==='all') return true;
+  if(f==='first') return !!p.firstAuthor;
+  if(f==='journal') return (p.type==='journal'||p.type==='conference')&&p.status!=='Accepted';
+  if(f==='accepted') return p.status==='Accepted';
+  if(f==='preprint') return p.type==='preprint';
+  if(f==='abstract') return p.type==='abstract'||p.type==='thesis';
+  return true;
+}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function boldMe(a){return esc(a).replace(/(Hoq,? ?(ME|Md\.? Enamul)?)/g,'<b>$1</b>');}
+
+function qrSvg(key,size){
+  const q=QR[key]; if(!q) return '';
+  return '<div class="qr" style="width:'+(size||104)+'px"><svg viewBox="-2 -2 '+(q.size+4)+' '+(q.size+4)+
+         '" shape-rendering="crispEdges" role="img" aria-label="QR code for '+esc(q.label)+
+         '"><rect x="-2" y="-2" width="'+(q.size+4)+'" height="'+(q.size+4)+'" fill="#fff"/><path d="'+q.path+'" fill="#0A0E13"/></svg></div>';
+}
+
+function render(){
+  const list=document.getElementById('pubList');
+  const shown=PUBS.filter(p=>matches(p,active));
+  list.innerHTML=shown.map(p=>{
+    const cls=p.status==='Accepted'?'ct':p.type==='preprint'?'hema':p.type==='abstract'||p.type==='thesis'?'':'he';
+    const links=[];
+    if(p.url) links.push('<a class="btn btn-outline btn-sm" href="'+esc(p.url)+'" rel="noopener">'+(p.doi?'DOI':'Open')+'</a>');
+    if(p.qr)  links.push('<button class="btn btn-he btn-sm" type="button" data-qr="'+esc(p.id)+'">QR</button>');
+    if(p.citations) links.push('<span class="chip">'+p.citations+' citations</span>');
+    return '<li class="pub">'+
+      '<div class="pub-year">'+esc(p.year||'')+'</div>'+
+      '<div>'+
+        '<h3>'+(p.url?'<a href="'+esc(p.url)+'" rel="noopener">'+esc(p.title)+'</a>':esc(p.title))+'</h3>'+
+        '<p class="auth">'+boldMe(p.authors)+'</p>'+
+        '<p class="venue">'+esc(p.venue||'')+'</p>'+
+        (p.note?'<p class="note">'+esc(p.note)+'</p>':'')+
+        '<div class="pub-foot">'+
+          '<span class="chip '+cls+'">'+esc(p.status||'')+'</span>'+
+          (p.firstAuthor?'<span class="chip ct">First author</span>':'')+
+          (p.tags||[]).map(t=>'<span class="chip">'+esc(t)+'</span>').join('')+
+          links.join('')+
+        '</div>'+
+        (p.qr?'<div class="qr-panel" id="qr-'+esc(p.id)+'">'+qrSvg(p.qr,104)+
+              '<p>Scan to open<br>'+esc(QR[p.qr]?QR[p.qr].url:'')+'</p></div>':'')+
+      '</div></li>';
+  }).join('');
+
+  const first=PUBS.filter(p=>p.firstAuthor).length;
+  document.getElementById('pubCount').textContent=
+    shown.length+' of '+PUBS.length+' shown · '+first+' as first author';
+  const sp=document.querySelector('[data-stat="pubs"]'), sf=document.querySelector('[data-stat="first"]');
+  if(sp) sp.textContent=PUBS.length; if(sf) sf.textContent=first;
+
+  list.querySelectorAll('[data-qr]').forEach(b=>b.addEventListener('click',()=>{
+    const panel=document.getElementById('qr-'+b.dataset.qr);
+    const open=panel.classList.toggle('open');
+    b.textContent=open?'Hide QR':'QR';
+  }));
+}
+
+function buildFilters(){
+  const box=document.getElementById('filters');
+  box.innerHTML=FILTERS.map(([k,l])=>
+    '<button class="filter" type="button" data-f="'+k+'" aria-pressed="'+(k==='all')+'">'+l+'</button>').join('');
+  box.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{
+    active=b.dataset.f;
+    box.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+    render();
+  }));
+}
+
+function load(data){
+  PUBS=(data.publications||[]).slice().sort((a,b)=>(b.year||0)-(a.year||0)||(a.firstAuthor?-1:1));
+  document.getElementById('lastUpdated').textContent=data.updated||'—';
+  render();
+}
+buildFilters();
+fetch('data/publications.json',{cache:'no-cache'})
+  .then(r=>{if(!r.ok) throw 0; return r.json();})
+  .then(load)
+  .catch(()=>load(FALLBACK));   /* opening index.html straight from disk still works */
+</script>
+</body>
+</html>
