@@ -31,6 +31,7 @@ WALL = ["website", "scholar", "linkedin", "github", "email",
         "jiim2025", "virtualeyes", "rgg2026", "neurips2025", "review2026"]
 
 # the eight photographs, and the two diagrams shown under Selected systems
+FEATURED = ["midl-taipei", "cancer-retreat"]          # two large tiles, top of the grid
 GALLERY = ["edrn-poster", "datathon-team", "judging", "hackathon",
            "aptec", "poster-session", "caltech", "lab-visit"]
 FIGURES = ["pipeline", "model"]
@@ -60,10 +61,11 @@ def main():
     )
 
     gallery = "\n      ".join(
-        f'<figure><a href="{gal[k]["file"]}" rel="noopener">'
+        f'<figure class="{"big" if k in FEATURED else "small"}">'
+        f'<a href="{gal[k]["file"]}" rel="noopener">'
         f'<img src="data:image/jpeg;base64,{gal[k]["b64"]}" alt="{gal[k]["alt"]}" loading="lazy">'
         f'</a><figcaption>{gal[k]["cap"]}</figcaption></figure>'
-        for k in GALLERY if k in gal
+        for k in FEATURED + GALLERY if k in gal
     )
     figures = "\n      ".join(
         f'<figure class="figure"><img src="data:image/jpeg;base64,{gal[k]["b64"]}" '

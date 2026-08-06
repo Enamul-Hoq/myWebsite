@@ -328,8 +328,12 @@ h1.name .thin{display:block;font-weight:500;font-size:.42em;letter-spacing:-.01e
 /* ---------------- gallery ---------------- */
 .gal{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
 @media(max-width:900px){.gal{grid-template-columns:repeat(2,1fr)}}
-.gal figure{margin:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
-.gal img{aspect-ratio:4/3;object-fit:cover;width:100%;transition:transform .5s,filter .5s;filter:saturate(.9)}
+.gal figure{margin:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel);display:flex;flex-direction:column}
+.gal img{aspect-ratio:4/3;object-fit:cover;width:100%;flex:1;min-height:0;transition:transform .5s,filter .5s;filter:saturate(.9)}
+.gal .big{grid-column:span 2;grid-row:span 2}
+.gal .big img{aspect-ratio:auto;height:100%}
+.gal .big figcaption{font-size:10.5px;color:var(--ink2)}
+@media(max-width:900px){.gal .big{grid-column:span 2;grid-row:span 1}.gal .big img{aspect-ratio:4/3;height:auto}}
 .gal figure:hover img{transform:scale(1.04);filter:saturate(1)}
 .gal figure{position:relative}
 .gal figcaption{padding:.65rem .8rem;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);border-top:1px solid var(--line)}
@@ -863,7 +867,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
         <p class="eyebrow">Field notes</p>
         <h2 style="margin-top:1rem">Conferences, posters,<br>datathons</h2>
       </div>
-      <p>Talks at the NCI Early Detection Research Network, SIIM and UAMS; datathons at Emory; the occasional poster judging shift.</p>
+      <p>MIDL in Taipei, the NCI Early Detection Research Network at Caltech, SIIM, UAMS retreats, datathons at Emory — and the occasional poster judging shift.</p>
     </div>
     <div class="gal rise">{{GALLERY}}</div>
   </div>
