@@ -1,60 +1,24 @@
 {
-  "updated": "2026-08-04",
+  "updated": "2026-08-10",
   "note": "Entries with \"pinned\": true are hand-written and are never overwritten by the updater. Everything else may be added or refreshed automatically from OpenAlex.",
   "publications": [
     {
-      "id": "jiim-2025-raddino",
+      "id": "preprint-2026-ldct-review",
       "pinned": true,
-      "title": "Harnessing native-resolution 2D embeddings for lung cancer classification: a feasibility study with the RAD-DINO self-supervised foundation model",
-      "authors": "Hoq ME, Tarbox L, Johann D Jr, Larson-Prior L, Prior F",
-      "venue": "Journal of Imaging Informatics in Medicine",
-      "year": 2025,
-      "type": "journal",
-      "status": "Peer-reviewed",
-      "firstAuthor": true,
-      "doi": "10.1007/s10278-025-01748-4",
-      "url": "https://doi.org/10.1007/s10278-025-01748-4",
-      "qr": "jiim2025",
-      "note": "ROC-AUC 0.817 and calibrated PR-AUC 0.705 at ~6% screening prevalence, from frozen embeddings plus a lightweight MLP.",
-      "tags": [
-        "Screening CT",
-        "Foundation models"
-      ]
-    },
-    {
-      "id": "neurips-2025-diffusion",
-      "pinned": true,
-      "title": "Semantic and visual crop-guided diffusion models for heterogeneous tissue synthesis in histopathology",
-      "authors": "Alfasly S, Uegami W, Hoq ME, Alabtah G, Tizhoosh HR",
-      "venue": "Advances in Neural Information Processing Systems (NeurIPS 2025)",
-      "year": 2025,
-      "type": "conference",
-      "status": "Peer-reviewed",
-      "firstAuthor": false,
-      "url": "https://openreview.net/forum?id=yNVDkAjGjw",
-      "tags": [
-        "Digital pathology",
-        "Generative models"
-      ],
-      "qr": "neurips2025",
-      "note": "A latent diffusion model conditioned on both semantic maps and raw tissue crops, so synthesised regions keep the morphology they are supposed to show."
-    },
-    {
-      "id": "midl-2026-virtual-eyes",
-      "pinned": true,
-      "title": "Virtual-Eyes: quantitative validation of a lung CT quality-control pipeline for foundation-model cancer-risk prediction",
-      "authors": "Hoq ME, Larson-Prior L, Prior F",
-      "venue": "Medical Imaging with Deep Learning (MIDL)",
+      "title": "Artificial intelligence for low-dose CT lung cancer screening: a systematic review of deep learning, input dimensionality, workflow integration, and foundation models",
+      "authors": "Hoq ME, Prior F",
+      "venue": "Preprints.org",
       "year": 2026,
-      "type": "conference",
-      "status": "Accepted",
+      "type": "preprint",
+      "status": "Preprint",
       "firstAuthor": true,
-      "url": "https://arxiv.org/abs/2512.24294",
-      "qr": "virtualeyes",
-      "note": "A 16-bit CT quality-control pipeline, and a measurement of how much preprocessing separately helps generalist and specialist models.",
+      "doi": "10.20944/preprints202606.1208.v1",
+      "url": "https://doi.org/10.20944/preprints202606.1208.v1",
+      "qr": "review2026",
+      "note": "Where the field stands on 2D versus 3D inputs, workflow integration and foundation models, and what is still open.",
       "tags": [
         "Screening CT",
-        "Quality control"
+        "Review"
       ]
     },
     {
@@ -76,22 +40,35 @@
       "qr": "rgg2026"
     },
     {
-      "id": "preprint-2026-ldct-review",
+      "id": "midl-2026-virtual-eyes",
       "pinned": true,
-      "title": "Artificial intelligence for low-dose CT lung cancer screening: a systematic review of deep learning, input dimensionality, workflow integration, and foundation models",
-      "authors": "Hoq ME, Prior F",
-      "venue": "Preprints.org",
+      "title": "Virtual-Eyes: quantitative validation of a lung CT quality-control pipeline for foundation-model cancer-risk prediction",
+      "authors": "Hoq ME, Larson-Prior L, Prior F",
+      "venue": "Medical Imaging with Deep Learning (MIDL)",
       "year": 2026,
-      "type": "preprint",
-      "status": "Preprint",
+      "type": "conference",
+      "status": "Accepted",
       "firstAuthor": true,
-      "doi": "10.20944/preprints202606.1208.v1",
-      "url": "https://doi.org/10.20944/preprints202606.1208.v1",
-      "qr": "review2026",
-      "note": "Where the field stands on 2D versus 3D inputs, workflow integration and foundation models, and what is still open.",
+      "url": "https://arxiv.org/abs/2512.24294",
+      "qr": "virtualeyes",
+      "note": "A 16-bit CT quality-control pipeline, and a measurement of how much preprocessing separately helps generalist and specialist models.",
       "tags": [
         "Screening CT",
-        "Review"
+        "Quality control"
+      ]
+    },
+    {
+      "id": "ccm-2026-fai",
+      "pinned": true,
+      "title": "Impact of an elevated fluid-accumulation index in septic patients with HFrEF: a MIMIC-IV analysis",
+      "authors": "Barnes B, Hoq ME, Binette E, Lee S, Arumairaj A",
+      "venue": "Critical Care Medicine",
+      "year": 2026,
+      "type": "abstract",
+      "status": "Abstract",
+      "firstAuthor": false,
+      "tags": [
+        "Clinical data science"
       ]
     },
     {
@@ -110,6 +87,22 @@
       ]
     },
     {
+      "id": "w4414100284",
+      "pinned": false,
+      "source": "openalex",
+      "title": "Efficient Direct Cathode Regeneration for Spent Lithium-Ion Batteries via Planetary Centrifugal Mixing and Eutectic Salts",
+      "authors": "M. Fazlul Hoq, Dawoon Jang, Mazedur Rahman, Junwei Yep, Jung‐Hyun Kim, Hosop Shin",
+      "venue": "ACS Sustainable Chemistry & Engineering",
+      "year": 2025,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": true,
+      "doi": "10.1021/acssuschemeng.5c02632",
+      "url": "https://doi.org/10.1021/acssuschemeng.5c02632",
+      "citations": 9,
+      "tags": []
+    },
+    {
       "id": "mayo-2025-abstract",
       "pinned": true,
       "title": "From CNN to vision foundation models and LLMs: a multimodal framework for pathology image retrieval and auto-captioning",
@@ -122,7 +115,77 @@
       "tags": [
         "Digital pathology",
         "Vision-language"
-      ]
+      ],
+      "doi": "10.1016/j.mcpdig.2025.100291",
+      "url": "https://doi.org/10.1016/j.mcpdig.2025.100291"
+    },
+    {
+      "id": "jiim-2025-raddino",
+      "pinned": true,
+      "title": "Harnessing native-resolution 2D embeddings for lung cancer classification: a feasibility study with the RAD-DINO self-supervised foundation model",
+      "authors": "Hoq ME, Tarbox L, Johann D Jr, Larson-Prior L, Prior F",
+      "venue": "Journal of Imaging Informatics in Medicine",
+      "year": 2025,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": true,
+      "doi": "10.1007/s10278-025-01748-4",
+      "url": "https://doi.org/10.1007/s10278-025-01748-4",
+      "qr": "jiim2025",
+      "note": "ROC-AUC 0.817 and calibrated PR-AUC 0.705 at ~6% screening prevalence, from frozen embeddings plus a lightweight MLP.",
+      "tags": [
+        "Screening CT",
+        "Foundation models"
+      ],
+      "citations": 2
+    },
+    {
+      "id": "w4416613272",
+      "pinned": false,
+      "source": "openalex",
+      "title": "Mechanochemically Driven Cathode Healing: An Energy-Efficient Eutectic-Based Direct Recycling Strategy",
+      "authors": "M. Fazlul Hoq, Dawoon Jang, Mazedur Rahman, Jun Wei Yap, Jung‐Hyun Kim, Hosop Shin",
+      "venue": "ECS Meeting Abstracts",
+      "year": 2025,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": true,
+      "doi": "10.1149/ma2025-02184mtgabs",
+      "url": "https://doi.org/10.1149/ma2025-02184mtgabs",
+      "citations": 0,
+      "tags": []
+    },
+    {
+      "id": "w4409395632",
+      "pinned": false,
+      "source": "openalex",
+      "title": "Incidental Detection of Thoracic Ectopic Kidney with Bochdalek Hernia: A Case Report",
+      "authors": "Noor E Amrin Alim, Muhammad Farhan Muhtasim, A Persi, Mahjabin Nobi Khan, M. Fazlul Hoq, Mohammad Sazzad Hossain, Anjuman Ara Akhter, Pabitra Kumar Bhattacharjee",
+      "venue": "Bangladesh Journal of Nuclear Medicine",
+      "year": 2025,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": false,
+      "doi": "10.3329/bjnm.v27i2.79228",
+      "url": "https://doi.org/10.3329/bjnm.v27i2.79228",
+      "citations": 0,
+      "tags": []
+    },
+    {
+      "id": "w4409395884",
+      "pinned": false,
+      "source": "openalex",
+      "title": "Prevalence and Seasonal Variations of Vitamin D Deficiency in the Southeastern Region of Bangladesh",
+      "authors": "Mahjabin Nobi Khan, Muhammad Farhan Muhtasim, Abdullah Al Persi, M. Fazlul Hoq, Noor E Amrin Alim, Mohammad Sazzad Hossain, Anjuman Ara Akhter, Pabitra Kumar Bhattacharjee",
+      "venue": "Bangladesh Journal of Nuclear Medicine",
+      "year": 2025,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": false,
+      "doi": "10.3329/bjnm.v28i1.79538",
+      "url": "https://doi.org/10.3329/bjnm.v28i1.79538",
+      "citations": 2,
+      "tags": []
     },
     {
       "id": "ccm-2025-crrt",
@@ -139,18 +202,23 @@
       ]
     },
     {
-      "id": "ccm-2026-fai",
+      "id": "neurips-2025-diffusion",
       "pinned": true,
-      "title": "Impact of an elevated fluid-accumulation index in septic patients with HFrEF: a MIMIC-IV analysis",
-      "authors": "Barnes B, Hoq ME, Binette E, Lee S, Arumairaj A",
-      "venue": "Critical Care Medicine",
-      "year": 2026,
-      "type": "abstract",
-      "status": "Abstract",
+      "title": "Semantic and visual crop-guided diffusion models for heterogeneous tissue synthesis in histopathology",
+      "authors": "Alfasly S, Uegami W, Hoq ME, Alabtah G, Tizhoosh HR",
+      "venue": "Advances in Neural Information Processing Systems (NeurIPS 2025)",
+      "year": 2025,
+      "type": "conference",
+      "status": "Peer-reviewed",
       "firstAuthor": false,
+      "url": "https://openreview.net/forum?id=yNVDkAjGjw",
       "tags": [
-        "Clinical data science"
-      ]
+        "Digital pathology",
+        "Generative models"
+      ],
+      "qr": "neurips2025",
+      "note": "A latent diffusion model conditioned on both semantic maps and raw tissue crops, so synthesised regions keep the morphology they are supposed to show.",
+      "doi": "10.52202/085713-4185"
     },
     {
       "id": "edrn-2024-nlst",
@@ -169,18 +237,20 @@
       ]
     },
     {
-      "id": "aptec-2019-films",
-      "pinned": true,
-      "title": "Measurement of thickness and preservation of thin films at maximum wrapping speed",
-      "authors": "Hoq ME, Yoshida S, Jung H",
-      "venue": "APTEC Annual Meeting",
-      "year": 2019,
-      "type": "abstract",
-      "status": "Abstract",
-      "firstAuthor": true,
-      "tags": [
-        "Computational imaging"
-      ]
+      "id": "w4401694949",
+      "pinned": false,
+      "source": "openalex",
+      "title": "Ultrasound-Assisted Recovery of Cathode Active Materials Using Green Solvents: A Comparative Study",
+      "authors": "Hosop Shin, Sajibul Alam Bhuyan, Mazedur Rahman, M. Fazlul Hoq",
+      "venue": "ECS Meeting Abstracts",
+      "year": 2024,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": false,
+      "doi": "10.1149/ma2024-01552954mtgabs",
+      "url": "https://doi.org/10.1149/ma2024-01552954mtgabs",
+      "citations": 0,
+      "tags": []
     },
     {
       "id": "thesis-2020",
@@ -195,6 +265,52 @@
       "tags": [
         "Computational imaging"
       ]
+    },
+    {
+      "id": "aptec-2019-films",
+      "pinned": true,
+      "title": "Measurement of thickness and preservation of thin films at maximum wrapping speed",
+      "authors": "Hoq ME, Yoshida S, Jung H",
+      "venue": "APTEC Annual Meeting",
+      "year": 2019,
+      "type": "abstract",
+      "status": "Abstract",
+      "firstAuthor": true,
+      "tags": [
+        "Computational imaging"
+      ]
+    },
+    {
+      "id": "w2892209816",
+      "pinned": false,
+      "source": "openalex",
+      "title": "Band gap Measurement of P – type Monocrystalline Silicon Wafer",
+      "authors": "Galib Hashmi, MK Basher, M. Fazlul Hoq, MH Rahman",
+      "venue": "Bangladesh Journal of Scientific and Industrial Research",
+      "year": 2018,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": false,
+      "doi": "10.3329/bjsir.v53i3.38263",
+      "url": "https://doi.org/10.3329/bjsir.v53i3.38263",
+      "citations": 4,
+      "tags": []
+    },
+    {
+      "id": "w2789450682",
+      "pinned": false,
+      "source": "openalex",
+      "title": "Influence of total absorbed dose of gamma radiation on optical bandgap and structural properties of Mg-doped zinc oxide",
+      "authors": "Md. Firoz Pervez, M.N.H. Mia, Sazzad Hossain, Subhajit Saha, Md. Hasan Ali, Pooja Sarker, M. Khalid Hossain, Md. Abdul Matin, M. Fazlul Hoq, M. A. M. Chowdhury",
+      "venue": "Optik",
+      "year": 2018,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": false,
+      "doi": "10.1016/j.ijleo.2018.02.063",
+      "url": "https://doi.org/10.1016/j.ijleo.2018.02.063",
+      "citations": 65,
+      "tags": []
     }
   ]
 }
