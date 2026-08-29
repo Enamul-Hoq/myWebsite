@@ -31,7 +31,7 @@ WALL = ["website", "scholar", "linkedin", "github", "email",
         "jiim2025", "virtualeyes", "rgg2026", "neurips2025", "review2026"]
 
 # the eight photographs, and the two diagrams shown under Selected systems
-FEATURED = ["midl-taipei", "cancer-retreat"]          # two large tiles, top of the grid
+FEATURED = ["midl-taipei", "mayo-summit", "cancer-retreat"]   # large tiles, own row on top
 GALLERY = ["edrn-poster", "datathon-team", "judging", "hackathon",
            "aptec", "poster-session", "caltech", "lab-visit"]
 FIGURES = ["pipeline", "model"]
@@ -60,19 +60,20 @@ def main():
         for k in WALL if k in qrs
     )
 
-    gallery = "\n      ".join(
-        f'<figure class="{"big" if k in FEATURED else "small"}">'
-        f'<a href="{gal[k]["file"]}" rel="noopener">'
-        f'<img src="data:image/jpeg;base64,{gal[k]["b64"]}" alt="{gal[k]["alt"]}" loading="lazy">'
-        f'</a><figcaption>{gal[k]["cap"]}</figcaption></figure>'
-        for k in FEATURED + GALLERY if k in gal
-    )
+    def tile(k):
+        return (f'<figure><a href="{gal[k]["file"]}" rel="noopener">'
+                f'<img src="data:image/jpeg;base64,{gal[k]["b64"]}" alt="{gal[k]["alt"]}" loading="lazy">'
+                f'</a><figcaption>{gal[k]["cap"]}</figcaption></figure>')
+
+    featured = "\n      ".join(tile(k) for k in FEATURED if k in gal)
+    gallery = "\n      ".join(tile(k) for k in GALLERY if k in gal)
     figures = "\n      ".join(
         f'<figure class="figure"><img src="data:image/jpeg;base64,{gal[k]["b64"]}" '
         f'alt="{gal[k]["alt"]}" loading="lazy"><figcaption>{gal[k]["cap"]}</figcaption></figure>'
         for k in FIGURES if k in gal
     )
 
+    html = html.replace("{{FEATURED}}", featured)
     html = html.replace("{{GALLERY}}", gallery)
     html = html.replace("{{FIGURES}}", figures)
     html = html.replace("{{QR_CMU}}", qr_svg(qrs["cmu2026"]) if "cmu2026" in qrs else "")
@@ -85,7 +86,7 @@ def main():
         f.write(html)
 
     left = [t for t in ("{{PHOTO}}", "{{QR_WALL}}", "{{QR_DATA}}", "{{PUBS}}",
-                        "{{GALLERY}}", "{{FIGURES}}", "{{QR_CMU}}") if t in html]
+                        "{{GALLERY}}", "{{FEATURED}}", "{{FIGURES}}", "{{QR_CMU}}") if t in html]
     print(f"index.html written — {len(html)/1024:.0f} KB, {len(pubs['publications'])} publications, {len(WALL)} QR codes")
     if left:
         print("WARNING: unresolved placeholders:", left)

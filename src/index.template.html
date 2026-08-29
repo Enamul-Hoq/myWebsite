@@ -330,10 +330,13 @@ h1.name .thin{display:block;font-weight:500;font-size:.42em;letter-spacing:-.01e
 @media(max-width:900px){.gal{grid-template-columns:repeat(2,1fr)}}
 .gal figure{margin:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel);display:flex;flex-direction:column}
 .gal img{aspect-ratio:4/3;object-fit:cover;width:100%;flex:1;min-height:0;transition:transform .5s,filter .5s;filter:saturate(.9)}
-.gal .big{grid-column:span 2;grid-row:span 2}
-.gal .big img{aspect-ratio:auto;height:100%}
-.gal .big figcaption{font-size:10.5px;color:var(--ink2)}
-@media(max-width:900px){.gal .big{grid-column:span 2;grid-row:span 1}.gal .big img{aspect-ratio:4/3;height:auto}}
+.gal-featured{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem}
+@media(max-width:900px){.gal-featured{grid-template-columns:1fr}}
+.gal-featured figure{margin:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel);display:flex;flex-direction:column;transition:transform .3s,border-color .3s}
+.gal-featured figure:hover{transform:translateY(-3px);border-color:var(--line2)}
+.gal-featured img{aspect-ratio:5/4;object-fit:cover;width:100%;transition:transform .5s,filter .5s;filter:saturate(.92)}
+.gal-featured figure:hover img{transform:scale(1.03);filter:saturate(1)}
+.gal-featured figcaption{padding:.8rem .9rem;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);border-top:1px solid var(--line);line-height:1.6;flex:1}
 .gal figure:hover img{transform:scale(1.04);filter:saturate(1)}
 .gal figure{position:relative}
 .gal figcaption{padding:.65rem .8rem;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);border-top:1px solid var(--line)}
@@ -597,7 +600,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
         <div class="whr">
           <div><span class="k">What</span><span class="v">Content-based retrieval and automatic captioning for histopathology whole-slide images, built so the caption stays tied to real evidence.</span></div>
           <div><span class="k">How</span><span class="v">Vision foundation-model embeddings for retrieval, a hybrid rule-based and LLM summarisation pipeline, and retrieval-guided generation that constrains what the model is allowed to claim.</span></div>
-          <div><span class="k res">Result</span><span class="v">Semantic alignment above <b>0.82 cosine similarity</b> with fewer unsafe and hallucinated captions. Top-ten poster at the Mayo Clinic AI Summit; accepted to Ital-IA 2026, first author.</span></div>
+          <div><span class="k res">Result</span><span class="v">Semantic alignment above <b>0.82 cosine similarity</b> with fewer unsafe and hallucinated captions. Selected as a <b>top-ten poster from 300+ submissions</b> at the Mayo Clinic AI Summit; published at Ital-IA 2026, first author.</span></div>
         </div>
       </div>
     </article>
@@ -885,7 +888,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
         <p class="eyebrow bone">Honors</p>
         <ul>
           <li><span class="y">2026</span><span><b>Champion, three of five categories</b> — CMU–NVIDIA Federated Learning Hackathon</span></li>
-          <li><span class="y">2025</span><span><b>Top-ten poster</b> — Mayo Clinic AI Summit</span></li>
+          <li><span class="y">2025</span><span><b>Top-ten poster of 300+ submissions</b> — Mayo Clinic AI Summit</span></li>
           <li><span class="y">2024</span><span><b>Second place</b> — Datathon.org, Emory University School of Medicine</span></li>
           <li><span class="y">24–25</span><span>Travel grants — SIIM, SCCM, HITLAB</span></li>
         </ul>
@@ -931,8 +934,9 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
         <p class="eyebrow">Field notes</p>
         <h2 style="margin-top:1rem">Conferences, posters,<br>datathons</h2>
       </div>
-      <p>MIDL in Taipei, the NCI Early Detection Research Network at Caltech, SIIM, UAMS retreats, datathons at Emory — and the occasional poster judging shift.</p>
+      <p>MIDL in Taipei, the Mayo Clinic AI Summit, the NCI Early Detection Research Network at Caltech, UAMS retreats, datathons at Emory — and the occasional poster judging shift.</p>
     </div>
+    <div class="gal-featured rise">{{FEATURED}}</div>
     <div class="gal rise">{{GALLERY}}</div>
   </div>
 </section>
