@@ -359,6 +359,25 @@ h1.name .thin{display:block;font-weight:500;font-size:.42em;letter-spacing:-.01e
 footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
 .foot{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
 
+/* ---------------- media / video ---------------- */
+.media{display:grid;grid-template-columns:1.5fr 1fr;gap:1.3rem;align-items:start}
+@media(max-width:860px){.media{grid-template-columns:1fr}}
+.vid{margin:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel);transition:border-color .3s,transform .3s}
+.vid:hover{border-color:var(--line2);transform:translateY(-3px)}
+.vid-frame{position:relative;width:100%;aspect-ratio:16/9;border:0;padding:0;margin:0;display:block;cursor:pointer;background:linear-gradient(150deg,var(--panel2),var(--bg2));overflow:hidden}
+.vid.tall .vid-frame{aspect-ratio:4/5}
+.vid-frame img{width:100%;height:100%;object-fit:cover;filter:saturate(.9) brightness(.8);transition:filter .4s,transform .5s}
+.vid-frame:hover img{filter:saturate(1) brightness(.95);transform:scale(1.03)}
+.vid-frame iframe{width:100%;height:100%;border:0;display:block}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--ct) 92%,transparent);color:var(--primary-ink);box-shadow:0 12px 34px -12px rgba(0,0,0,.8);transition:transform .3s,background .3s}
+.vid-frame:hover .play{transform:translate(-50%,-50%) scale(1.09);background:var(--ct)}
+.play svg{width:22px;height:22px;margin-left:3px}
+.vid-stamp{position:absolute;right:10px;bottom:10px;padding:.28rem .55rem;border-radius:5px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;background:color-mix(in srgb,var(--bg) 84%,transparent);color:var(--ink2);border:1px solid var(--line)}
+.vid-body{padding:1.1rem 1.2rem 1.3rem}
+.vid-body h3{font-size:1.15rem;margin:.55rem 0 .5rem;line-height:1.3}
+.vid-body p{margin:0;color:var(--ink2);font-size:.95rem}
+.vid-body .chip{margin-top:.9rem;margin-right:.35rem}
+
 /* ---------------- press feature ---------------- */
 .press{
   position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
@@ -421,6 +440,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
     <nav class="nav" aria-label="Sections">
       <a href="#work">Work</a>
       <a href="#publications">Publications</a>
+      <a href="#media">Media</a>
       <a href="#path">Path</a>
       <a href="#toolkit">Toolkit</a>
       <a href="#recognition">Recognition</a>
@@ -628,6 +648,50 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0 3rem}
     </article>
 
     <div class="figs rise">{{FIGURES}}</div>
+  </div>
+</section>
+
+<!-- ============================ MEDIA ============================ -->
+<section id="media">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <p class="eyebrow he">On camera</p>
+        <h2 style="margin-top:1rem">Talking about<br>the work</h2>
+      </div>
+      <p>Interviews and short features on lung cancer screening AI, foundation models, and what it takes to move a model toward a clinic.</p>
+    </div>
+    <div class="media rise">
+
+      <figure class="vid">
+        <button class="vid-frame" type="button" data-yt="mKURqvMANKQ" data-start="1730" aria-label="Play the interview, starting at 28 minutes 50 seconds">
+          <img src="https://i.ytimg.com/vi/mKURqvMANKQ/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">
+          <span class="play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="vid-stamp">My segment starts at 28:50</span>
+        </button>
+        <figcaption class="vid-body">
+          <p class="eyebrow he">Interview</p>
+          <h3>On medical imaging AI and lung cancer screening</h3>
+          <p>A conversation about foundation models for screening CT, what large imaging datasets actually take to prepare, and where clinical translation gets hard. Press play and it opens at my segment.</p>
+          <span class="chip he">Long-form</span><span class="chip">Screening CT</span>
+        </figcaption>
+      </figure>
+
+      <figure class="vid tall">
+        <button class="vid-frame" type="button" data-yt="6cG90CH9UZA" data-start="0" aria-label="Play the SIIM travel grant feature">
+          <img src="https://i.ytimg.com/vi/6cG90CH9UZA/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">
+          <span class="play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="vid-stamp">Short</span>
+        </button>
+        <figcaption class="vid-body">
+          <p class="eyebrow ct">Feature</p>
+          <h3>SIIM travel grant</h3>
+          <p>A short feature marking the Society for Imaging Informatics in Medicine travel grant.</p>
+          <span class="chip ct">SIIM</span><span class="chip ct">2025</span>
+        </figcaption>
+      </figure>
+
+    </div>
   </div>
 </section>
 
@@ -971,6 +1035,22 @@ document.addEventListener('click',async e=>{
   }),{rootMargin:'0px 0px -8% 0px',threshold:.06});
   document.querySelectorAll('.rise').forEach((el,i)=>{el.style.transitionDelay=(i%4)*70+'ms';io.observe(el);});
 })();
+
+/* ---------- videos: nothing from YouTube loads until the visitor clicks ---------- */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-yt]');
+  if (!btn) return;
+  const holder = document.createElement('div');
+  holder.className = 'vid-frame';
+  const f = document.createElement('iframe');
+  f.src = 'https://www.youtube-nocookie.com/embed/' + btn.dataset.yt +
+          '?autoplay=1&start=' + (btn.dataset.start || 0) + '&rel=0';
+  f.title = 'Video player';
+  f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture';
+  f.allowFullscreen = true;
+  holder.appendChild(f);
+  btn.replaceWith(holder);
+});
 
 /* ---------- publications: rendered from data/publications.json ---------- */
 const QR = {{QR_DATA}};

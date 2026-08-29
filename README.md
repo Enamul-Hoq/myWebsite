@@ -164,6 +164,17 @@ Then `python scripts/build.py`.
 
 ---
 
+### Adding a video to the Media section
+
+Find the video's id — the part after `v=` in a normal URL, or after `/shorts/` for a
+short. In `src/index.template.html`, copy one of the two `<figure class="vid">`
+blocks in the Media section and change `data-yt` to the new id. `data-start` is the
+start point **in seconds** (28:50 = 1730); use `0` to start at the beginning. Add
+`class="vid tall"` for a vertical short. Then `python scripts/build.py`.
+
+Nothing loads from YouTube until a visitor clicks play, so the page stays fast and
+no tracking cookies are set on arrival.
+
 ### Adding a photo to the gallery
 
 Drop the image in `assets/img/gallery/`, add an entry to `GALLERY` in
