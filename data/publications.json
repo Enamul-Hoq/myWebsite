@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-31",
+  "updated": "2026-09-07",
   "note": "Entries with \"pinned\": true are hand-written and are never overwritten by the updater. Everything else may be added or refreshed automatically from OpenAlex.",
   "publications": [
     {
@@ -99,7 +99,7 @@
       "firstAuthor": true,
       "doi": "10.1021/acssuschemeng.5c02632",
       "url": "https://doi.org/10.1021/acssuschemeng.5c02632",
-      "citations": 9,
+      "citations": 10,
       "tags": []
     },
     {
@@ -139,7 +139,7 @@
         "Screening CT",
         "Foundation models"
       ],
-      "citations": 2
+      "citations": 3
     },
     {
       "id": "w4416613272",
