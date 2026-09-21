@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-14",
+  "updated": "2026-09-21",
   "note": "Entries with \"pinned\": true are hand-written and are never overwritten by the updater. Everything else may be added or refreshed automatically from OpenAlex.",
   "publications": [
     {
@@ -99,7 +99,7 @@
       "firstAuthor": true,
       "doi": "10.1021/acssuschemeng.5c02632",
       "url": "https://doi.org/10.1021/acssuschemeng.5c02632",
-      "citations": 10,
+      "citations": 11,
       "tags": []
     },
     {
