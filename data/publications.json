@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-21",
+  "updated": "2026-09-28",
   "note": "Entries with \"pinned\": true are hand-written and are never overwritten by the updater. Everything else may be added or refreshed automatically from OpenAlex.",
   "publications": [
     {
@@ -220,7 +220,8 @@
       ],
       "qr": "neurips2025",
       "note": "A latent diffusion model conditioned on both semantic maps and raw tissue crops, so synthesised regions keep the morphology they are supposed to show.",
-      "doi": "10.52202/085713-4185"
+      "doi": "10.52202/085713-4185",
+      "citations": 1
     },
     {
       "id": "edrn-2024-nlst",
