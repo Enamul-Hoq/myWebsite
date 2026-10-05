@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-28",
+  "updated": "2026-10-05",
   "note": "Entries with \"pinned\": true are hand-written and are never overwritten by the updater. Everything else may be added or refreshed automatically from OpenAlex.",
   "publications": [
     {
@@ -56,6 +56,22 @@
         "Screening CT",
         "Quality control"
       ]
+    },
+    {
+      "id": "w7140188250",
+      "pinned": false,
+      "source": "openalex",
+      "title": "843: IMPACT OF AN ELEVATED FLUID ACCUMULATION INDEX IN SEPTIC PATIENTS WITH HFREF: A MIMIC-IV ANALYSIS",
+      "authors": "Brian Barnes, Enamul Hoq, Emilee Binette, Soyoon Lee, Antony Arumairaj",
+      "venue": "Critical Care Medicine",
+      "year": 2026,
+      "type": "journal",
+      "status": "Peer-reviewed",
+      "firstAuthor": false,
+      "doi": "10.1097/01.ccm.0001185368.18997.a2",
+      "url": "https://doi.org/10.1097/01.ccm.0001185368.18997.a2",
+      "citations": 0,
+      "tags": []
     },
     {
       "id": "ccm-2026-fai",
